@@ -47,5 +47,24 @@ where:
 - $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights
 
 Above equations are used in the Stochastic Gradient Descent, where weights and biases are updated.
+But before we'll go to deep, let's check out how does this neural network deal with different problems.
 
+## Testing
+### Logic test
+
+Let's verify if our neural network works in a simple scenario. Suppose we have an array of 3 binary values. We put it into a magic box, close it, some magic happens, and we see that we've received an array of size 2 consisting of binary values as well. We do it for couple of different input arrays and we note what array we receive as an output:
+
+| Input array  | Output array |
+| ------------ | ------------ |
+| [1, 1, 0]  | [0, 0]  |
+| [1, 0, 1]  | [0, 1]  |
+| [1, 1, 1]  | [0, 0]  |
+| [0, 0, 0]  | [1, 1]  |
+| [0, 0, 1]  | [1, 1]  |
+| [0, 1, 0]  | [1, 0]  |
+
+We could see, that the way the magic box works is that it just flips the first and second bit and rejects the third column.
+The neural network, which stands for our brain, tells us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
+
+In order to solve this task, the network's architecture has been defined as below:
 
