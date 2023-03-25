@@ -67,4 +67,46 @@ We could see, that the way the magic box works is that it just flips the first a
 The neural network, which stands for our brain, tells us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
 
 In order to solve this task, the network's architecture has been defined as below:
+| Layer  | Neurons |
+| ------ | ------- |
+| Input  | 3  |
+| Output | 2  |
+
+And the outcome:
+| Input array  | Output array |
+| ------------ | ------------ |
+| [1, 0, 0]  | [0.05 0.89]  |
+
+Seems like really simple architecture is enough for solving this task.
+Let's try something more challenging then.
+
+### Sum test
+Let's perform a task similar to the previous one, but with larger number of both input and outputs. The array analogical to the previous one, standing for a training data, has been defined as follows:
+| Input array  | Output array |
+| ------------ | ------------ |
+| [1, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]  |
+| [0, 1, 0, 0, 0, 1, 0, 0, 0]  | [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]  |
+| [0, 1, 0, 1, 1, 0, 1, 1, 0]  | [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]  |
+| [0, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]  |
+| [1, 1, 0, 1, 1, 1, 0, 1, 1]  | [0, 0, 0, 0, 0, 0, 0, 1, 0, 0]  |
+| [0, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]  |
+| ...  | ...  |
+
+Can you see the pattern? Looks like the output array's index corresponding to the value of 1 tells us how many ones there are in the input array. For example - in the first row of the training data the number of ones in the input array's equal to 4. That's why one appears in the output array at index of 4.
+
+Taking into account increased complexity of this task, the network's structure has been defined as below:
+|   Layer  |  Neurons |
+| -------- | -------- |
+|   Input  | 9   |
+|  Hidden  | 50  |
+|  Hidden  | 50  |
+|  Hidden  | 50  |
+|  Output  | 10  |
+
+The outcome for sample test data:
+| Input array  | Output array |
+| ------------ | ------------ |
+| [0, 0, 0, 0, 0, 1, 0, 0, 0]  | []  |
+
+### Cartesian plane test
 
