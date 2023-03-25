@@ -47,7 +47,7 @@ where:
 - $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights
 
 Above equations are used in the Stochastic Gradient Descent, where weights and biases are updated.
-But before we'll go to deep, let's check out how does this neural network deal with different problems.
+But before we'll go too deep, let's check out how does this neural network deal with different problems.
 
 ## Testing
 ### Logic test
@@ -112,5 +112,6 @@ The outcome for sample test data:
 
 ## References
 [1] http://neuralnetworksanddeeplearning.com/
+
 [2] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
 
