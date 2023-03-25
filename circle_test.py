@@ -7,7 +7,6 @@ from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A S   # # # # # # # # # # # # # # # # # # # # #
 
-
 input_array = np.random.uniform(low=0, high=4, size=(1000, 2))
 
 output_array = [1 if (x-1)**2 + (y-3)**2 <= 0.5 or
@@ -55,14 +54,14 @@ ann.add_layer(1, activation_function='sigmoid')
 ann.load_network('circle_test_H20-20')
 
 # Train neural network with given parameters
-ann.train(training_data,
-          epochs=1000,
-          learning_ratio=0.05,
-          plot_cost=True,
-          plot_accuracy=True,
-          discretize_accuracy=True)
+# ann.train(training_data,
+#           epochs=500,
+#           learning_ratio=0.01,
+#           plot_cost=True,
+#           plot_accuracy=True,
+#           discretize_accuracy=True)
 
-# ann.save_network('')
+# ann.save_network('circle_test_H20-20')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -75,7 +74,7 @@ for (x, y) in test_array:
     if predicted_output >= 0.5:
         plt.scatter(x, y, s=3, c='y', alpha=abs(2*predicted_output-1))
     else:
-        plt.scatter(x, y, s=3, c='b', alpha=abs(*predicted_output-1))
+        plt.scatter(x, y, s=3, c='b', alpha=abs(2*predicted_output-1))
 
 ax = plt.gca()
 ax.set_aspect('equal', adjustable='box')

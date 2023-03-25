@@ -3,8 +3,8 @@ import numpy as np
 from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A S   # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A   # # # # # # # # # # # # # # # # # # # # # # #
 
 input_data = np.random.choice([0, 1], size=(500, 9))
 input_data = np.unique(input_data, axis=0)
@@ -38,27 +38,27 @@ ann.add_layer(9, activation_function='')
 
 # Hidden layers
 ann.add_layer(50, activation_function='sigmoid')
-ann.add_layer(50, activation_function='sigmoid')
-ann.add_layer(50, activation_function='sigmoid')
 
 # Output layer
 ann.add_layer(10, activation_function='sigmoid')
 
-# Train neural network with given parameters
-ann.train(training_data,
-          epochs=1000,
-          learning_ratio=0.05,
-          plot_cost=True,
-          plot_accuracy=True,
-          discretize_accuracy=False)
+ann.load_network('sum_test_H-50')
 
-ann.save_network('sum_test_H-50-50-50')
+# Train neural network with given parameters
+# ann.train(training_data,
+#           epochs=1000,
+#           learning_ratio=0.05,
+#           plot_cost=True,
+#           plot_accuracy=True,
+#           discretize_accuracy=False)
+#
+# ann.save_network('sum_test_H-50')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # #   V E R I F I C A T I O N   # # # # # # # # # # # # # # # # # # # # # #
 
-input_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]    # 4
+input_array = [0, 0, 1, 0, 0, 1, 0, 0, 0]    # 4
 
 print(ann.predict_output(input_array))
 print((np.round(ann.predict_output(input_array), 2)))
