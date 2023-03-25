@@ -110,3 +110,7 @@ The outcome for sample test data:
 
 ### Cartesian plane test
 
+## References
+[1] http://neuralnetworksanddeeplearning.com/
+[2] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
