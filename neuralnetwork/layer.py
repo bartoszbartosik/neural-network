@@ -2,7 +2,7 @@ from typing import Callable
 
 import numpy as np
 
-from feedforwardneuralnetwork.neuron import Neuron
+from neuralnetwork.neuron import Neuron
 
 class Layer:
 

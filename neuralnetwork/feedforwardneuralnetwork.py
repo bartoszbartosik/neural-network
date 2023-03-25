@@ -1,10 +1,11 @@
+import json
 import sys
 from typing import List, Callable
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from feedforwardneuralnetwork.layer import Layer
+from neuralnetwork.layer import Layer
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -31,15 +32,19 @@ def derivative(function: Callable, x: np.ndarray):
             return 1
 
 
-class NeuralNetwork:
+class FeedforwardNeuralNetwork:
 
     def __init__(self):
+
 
         # INITIALIZE LAYERS
         self.layers: List[Layer] = []
 
 
     def add_layer(self, neurons_number: int, activation_function: str):
+        """
+        Add new layer with consisting of given number of neurons and their activation function.
+        """
         function = None
         if activation_function == 'sigmoid':
             function = sigmoid
@@ -56,7 +61,10 @@ class NeuralNetwork:
                                      activation_function=function))
 
 
-    def train(self, training_data, epochs, learning_ratio, plot_cost=False, plot_accuracy=False, direct_accuracy=False):
+    def train(self, training_data, epochs, learning_ratio, plot_cost=False, plot_accuracy=False, discretize_accuracy=False):
+        """
+        Train the Neural Network.
+        """
         total_costs = []
         accuracy = []
         for i in range(epochs):
@@ -72,7 +80,7 @@ class NeuralNetwork:
             if plot_cost:
                 total_costs.append(self.total_cost(training_data))
             if plot_accuracy:
-                accuracy.append(self.accuracy(training_data, direct_accuracy))
+                accuracy.append(self.accuracy(training_data, discretize_accuracy))
 
         if plot_cost or plot_accuracy:
             if plot_cost:
@@ -96,7 +104,10 @@ class NeuralNetwork:
             plt.show()
 
 
-    def predicted_output(self, input_data):
+    def predict_output(self, input_data):
+        """
+        Predict output of a neural network for a given input
+        """
         self.feedforward(input_data)
         return self.layers[-1].toarray()
 
@@ -110,7 +121,10 @@ class NeuralNetwork:
 
 
     def total_cost(self, training_data):
-        # Return total average cost function value for all the training data
+        """
+        Return total average cost function value for all the training data
+        """
+        # Initialize error array
         errors = []
 
         # Calculate error for each training data
@@ -133,14 +147,17 @@ class NeuralNetwork:
         return errors
 
 
-    def accuracy(self, training_data, direct):
+    def accuracy(self, training_data, discretize):
+        """
+        Compute percentage of correct Neural Network's predictions of the training data.
+        """
         correct_results = 0
         total = len(training_data[0])
         for input_data, output_data in zip(training_data[0], training_data[1]):
             # Pass the input data to the neural network
             self.feedforward(input_data)
 
-            if direct:
+            if discretize:
                 # Actual output
                 actual_output = np.round(self.layers[-1].toarray())
                 # Expected output
@@ -151,8 +168,6 @@ class NeuralNetwork:
                 # Expected output
                 expected_output = np.argmax(output_data)
 
-            print('actual_output: {}'.format(actual_output))
-            print('expected_output: {}'.format(expected_output))
             if actual_output == expected_output:
                 correct_results += 1
 
@@ -245,6 +260,48 @@ class NeuralNetwork:
             for index, neuron in enumerate(self.layers[i].neurons):
                 neuron.weights = w_old[index] - learning_rate*grad_w[-i-1].transpose()[index]
                 neuron.bias = b_old[index] - learning_rate*grad_b[-i-1].transpose()[index]
+
+
+    # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+    # # # # # # # # # # # # # # # # # # # # # #   S A V E   &   L O A D   # # # # # # # # # # # # # # # # # # # # # #
+
+    def save_network(self, filename, filepath = 'saved/'):
+        """
+        Save current Neural Network's architecture.
+        """
+        network = {
+            'layers': [(layer.size, layer.activation_function.__name__) for layer in self.layers],
+            'weights': [layer.get_weights().tolist() for layer in self.layers[1:]],
+            'biases': [layer.get_biases().tolist() for layer in self.layers[1:]]
+        }
+
+        file = open('{}{}.json'.format(filepath, filename), 'w')
+        json.dump(network, file)
+        file.close()
+
+    def load_network(self, filename, filepath = 'saved/'):
+        """
+        Load and overwrite Neural Network from a given file.
+        """
+        file = open('{}{}.json'.format(filepath, filename), 'r')
+        network = json.load(file)
+        file.close()
+
+        layers = network['layers']
+
+        weights = network['weights']
+        biases = network['biases']
+
+        self.layers.clear()
+        for size, activation_function in layers:
+            self.add_layer(size, activation_function)
+
+
+        for layer, weights_l, biases_l in zip(self.layers[1:], weights, biases):
+            for neuron, weight, bias in zip(layer.neurons, weights_l, biases_l):
+                neuron.weights = weight
+                neuron.bias = bias
+
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

@@ -1,6 +1,6 @@
 import numpy as np
 
-from feedforwardneuralnetwork.neuralnetwork import NeuralNetwork
+from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -31,7 +31,7 @@ print(training_data)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
-ann = NeuralNetwork()
+ann = FeedforwardNeuralNetwork()
 
 # Input layer
 ann.add_layer(9, activation_function='')
@@ -50,7 +50,9 @@ ann.train(training_data,
           learning_ratio=0.05,
           plot_cost=True,
           plot_accuracy=True,
-          direct_accuracy=False)
+          discretize_accuracy=False)
+
+ann.save_network('sum_test_H-50-50-50')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -58,6 +60,6 @@ ann.train(training_data,
 
 input_array = [0, 0, 0, 0, 0, 0, 0, 0, 0]    # 4
 
-print(ann.predicted_output(input_array))
-print((np.round(ann.predicted_output(input_array), 2)))
-print('Neural network solution: ', np.argmax(ann.predicted_output(input_array)))
+print(ann.predict_output(input_array))
+print((np.round(ann.predict_output(input_array), 2)))
+print('Neural network solution: ', np.argmax(ann.predict_output(input_array)))
