@@ -99,19 +99,35 @@ Taking into account increased complexity of this task, the network's structure h
 | -------- | -------- |
 |   Input  | 9   |
 |  Hidden  | 50  |
-|  Hidden  | 50  |
-|  Hidden  | 50  |
 |  Output  | 10  |
 
 The outcome for sample test data:
 | Input array  | Output array |
 | ------------ | ------------ |
-| [0, 0, 0, 0, 0, 1, 0, 0, 0]  | []  |
+| [0, 0, 1, 0, 0, 1, 0, 0, 0]  | [0.   0.04 0.99 0.01 0.   0.   0.   0.   0.   0.  ]  |
+
+A value of 0.99 appears at the 2nd index of the output arrays which means that the sum of ones in the input array's equal to 2.
 
 ### Cartesian plane test
+Let's create scenario which can be visualized nicer than using tables. For this purpose, let's take into account an input array consisting of 2 values in range between 0 and 4 each. The output is a single value - either 0 or 1. The graph below visualizes training data with 1000 randomly generated points and their classification which could be defined as - does the point belong to the one of the four circles?
+<p align="center"><img src="Plots/circles_4_training_data.png" width="500" class="center"/></p>
+
+The neural network structure has been defined as follows:
+|   Layer  |  Neurons |
+| -------- | -------- |
+|   Input  | 2   |
+|  Hidden  | 20  |
+|  Hidden  | 20  |
+|  Output  | 1  |
+
+And output for 2000 randomly generated test data:
+<p align="center"><img src="Plots/circles_4_test_data.png" width="500" class="center"/></p>
+
 
 ## References
 [1] http://neuralnetworksanddeeplearning.com/
 
 [2] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+[3] https://playground.tensorflow.org
 
