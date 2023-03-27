@@ -3,7 +3,7 @@ FEEDFORWARD NEURAL NETWORK
 </h1>
 
 ## Hello!
-In the files above you'll find the most basic feedforward neural network. It has been created without usage of external libraries, like tensorflow, so that you could delve into my interpretation of this wonderful tool's principle of operation.
+In the files above you'll find the most basic feedforward neural network. It has been created without usage of external libraries, like tensorflow, so that you could delve into how I managed to understand concept of this fascinating tool's principle of operation.
 
 ## Background
 The neural network learns by a backpropagation algorithm. Its purpose is to determine the cost function gradient with respect to the network's both weights and biases (separately). Equations breathing life into plain neural network architecture have been listed below:
