@@ -8,7 +8,7 @@ In the files above you'll find the most basic feedforward neural network. It has
 ## Background
 The neural network learns by a backpropagation algorithm. Its purpose is to determine the cost function gradient with respect to the network's both weights and biases (separately). Equations breathing life into plain neural network architecture have been listed below:
 ```math
-\delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L}) = (a^{l} - y) \odot \sigma ' (z^{L})
+\delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L})
 ```
 ```math
 \delta^{l} = ((w^{l+1})^{T}\delta^{l+1}) \odot \sigma ' (z^{l})
@@ -17,7 +17,7 @@ The neural network learns by a backpropagation algorithm. Its purpose is to dete
 \frac{\partial C}{\partial b_{j}^{l}} = \delta_{j}^{l} 
 ```
 ```math
-\frac{\partial C}{\partial w_{jk}^{l}} = w_{k}^{l-1} \delta_{j}^{l} = a^{l-1} \otimes (\delta^{l} \sigma ' (z^{L}))
+\frac{\partial C}{\partial w_{jk}^{l}} = w_{k}^{l-1} \delta_{j}^{l}
 ```
 
 These nicely formed equations appears in the code in a following form:
