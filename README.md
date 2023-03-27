@@ -31,7 +31,7 @@ These nicely formed equations appears in the code in a following form:
 \frac{\partial C}{\partial b^{l}} = \delta^{l} 
 ```
 ```math
-\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \phi ' (z^{L}))
+\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \phi ' (z^{l}))
 ```
 
 where:
