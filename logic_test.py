@@ -7,7 +7,9 @@ from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A S   # # # # # # # # # # # # # # # # # # # # #
 
-
+# # # # # # # # #
+# generate data #
+# # # # # # # # #
 training_data = (
     [
         [1, 1, 0],

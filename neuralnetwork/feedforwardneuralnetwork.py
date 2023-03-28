@@ -49,6 +49,7 @@ class FeedforwardNeuralNetwork:
         if activation_function == 'sigmoid':
             function = sigmoid
         elif activation_function == 'relu':
+
             function = relu
 
         if len(self.layers) == 0:
@@ -172,7 +173,6 @@ class FeedforwardNeuralNetwork:
                 correct_results += 1
 
         return correct_results/total
-
 
 
     def backpropagation(self, output_data):

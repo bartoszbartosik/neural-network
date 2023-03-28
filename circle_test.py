@@ -7,6 +7,9 @@ from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A S   # # # # # # # # # # # # # # # # # # # # #
 
+# # # # # # # # #
+# generate data #
+# # # # # # # # #
 input_array = np.random.uniform(low=0, high=4, size=(1000, 2))
 
 output_array = [1 if (x-1)**2 + (y-3)**2 <= 0.5 or
@@ -15,11 +18,21 @@ output_array = [1 if (x-1)**2 + (y-3)**2 <= 0.5 or
                      (x-3)**2 + (y-3)**2 <= 0.5
                 else 0 for (x, y) in input_array ]
 
+np.savez('training_data/plane_test.npz', input_data=input_array, output_data=output_array)
+
+# # # # # # #
+# load data #
+# # # # # # #
+training_data_npz = np.load('training_data/plane_test.npz')
+
 training_data = (
-    input_array, output_array
+    training_data_npz['input_data'], training_data_npz['output_data']
 )
 
 
+# # # # # # # # # #
+# visualize  data #
+# # # # # # # # # #
 for (x, y), out in zip(input_array, output_array):
     if out:
         plt.scatter(x, y, s=3, c='y')
