@@ -22,16 +22,16 @@ The neural network learns by a backpropagation algorithm. Its purpose is to dete
 
 These nicely formed equations appears in the code in a following form:
 ```math
-\delta^{L} = (a^{L} - y) \odot \phi ' (z^{L})
+\delta^{L} = (a^{L} - y) \odot \sigma ' (z^{L})
 ```
 ```math
-\delta^{l} = ((w^{l+1})^{T}\delta^{l+1}) \odot \phi ' (z^{l})
+\delta^{l} = ((w^{l+1})^{T}\delta^{l+1}) \odot \sigma ' (z^{l})
 ```
 ```math
 \frac{\partial C}{\partial b^{l}} = \delta^{l} 
 ```
 ```math
-\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \phi ' (z^{l}))
+\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \sigma ' (z^{l}))
 ```
 
 where:
@@ -42,7 +42,7 @@ where:
 - $a^{L}$: output vector of output layer,
 - $a^{l}$: output vector of l-th layer,
 - $y$: expected output,
-- $\phi()$: activation function
+- $\sigma()$: sigmoid activation function
 - $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases
 - $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights
 
