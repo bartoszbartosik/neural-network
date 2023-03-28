@@ -123,6 +123,33 @@ The neural network structure has been defined as follows:
 And output for 2000 randomly generated test data:
 <p align="center"><img src="Plots/circles_4_test_data.png" width="500" class="center"/></p>
 
+### MNIST
+Let's try something a little bit more challenging and perform well known training on MNIST database of handwritten digits. The network's structure applied for this task:
+|   Layer  |  Neurons |
+| -------- | -------- |
+|   Input  | 748   |
+|  Hidden  | 128  |
+|  Output  | 10  |
+
+The graphs below illustrate the cost function and the accuracy change over epochs, i. e., number of times the neural network came through the whole training dataset:
+<p align="center"><img src="Plots/mnist_cost.png" width="500" class="center"/></p>
+<p align="center"><img src="Plots/mnist_accuracy.png" width="500" class="center"/></p>
+
+The results for a data prepared for the testing purpose:
+|   Input  |  Output | Input | Output
+| -------- | -------- | -------- | -------- |
+|  <p align="center"><img src="training_data/mnist_digits/0_test.png" width="50" class="center"/></p>  | 0 | <p align="center"><img src="training_data/mnist_digits/5_test.png" width="50" class="center"/></p>  | 5 | 
+|  <p align="center"><img src="training_data/mnist_digits/1_test.png" width="50" class="center"/></p>  | 1 | <p align="center"><img src="training_data/mnist_digits/6_test.png" width="50" class="center"/></p>  | 6 |
+|  <p align="center"><img src="training_data/mnist_digits/2_test.png" width="50" class="center"/></p>  | 2 |  <p align="center"><img src="training_data/mnist_digits/7_test.png" width="50" class="center"/></p>  | 7 |
+|  <p align="center"><img src="training_data/mnist_digits/3_test.png" width="50" class="center"/></p>  | 3 |  <p align="center"><img src="training_data/mnist_digits/8_test.png" width="50" class="center"/></p>  | 8 |
+|  <p align="center"><img src="training_data/mnist_digits/4_test.png" width="50" class="center"/></p>  | 4 |  <p align="center"><img src="training_data/mnist_digits/9_test.png" width="50" class="center"/></p>  | 3 |
+
+
+90% accuracy for a simple dataset which hasn't been seen by this network before sounds really nice, especially taking into account the basic structure!
+
+### Conclusions
+The solution of above problems proves that the simplest neural network's form can already bring satisfyng outcomes.
+
 
 ## References
 [1] http://neuralnetworksanddeeplearning.com/
