@@ -149,7 +149,13 @@ The results for a data prepared for the testing purpose:
 90% accuracy for a simple dataset which hasn't been seen by this network before sounds really nice, especially taking into account the basic structure!
 
 ### Conclusions
-The solution of above problems proves that the simplest neural network's form can already bring satisfyng outcomes.
+The solution of above problems proves that the simplest neural network form can already bring satisfying outcomes. The techniques which could significantly improve the learning process as well as the accuracy are:
+- Cross-entropy cost function:
+  its gradient with respect to weights and biases is free of the $\sigma ' ()$ term which for quadratic cost function causes the slowdown of learning process for those of their values, which are located far away from the minimum.
+- Softmax output layer:
+  it's an activation function which normalizes the neural network output providing simplified interpretation of the received output - it could be interpreted as a measure of probability with which the net classifies the given input as computed output.
+- Regularization:
+  it's an additional term in the cost function penalizing higher values of weights and biases. This technique helps with overfitting problems and makes the network more generalized.
 
 
 ## References
