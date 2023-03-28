@@ -64,7 +64,7 @@ Let's verify if our neural network works in a simple scenario. Suppose we have a
 | [0, 1, 0]  | [1, 0]  |
 
 We could see, that the way the magic box works is that it just flips the first and second bit and rejects the third column.
-The neural network, which stands for our brain, tells us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
+Our own neural networks tell us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
 
 In order to solve this task, the network's architecture has been defined as below:
 | Layer  | Neurons |
