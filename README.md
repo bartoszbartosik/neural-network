@@ -124,14 +124,15 @@ And output for 2000 randomly generated test data:
 <p align="center"><img src="Plots/circles_4_test_data.png" width="500" class="center"/></p>
 
 ### MNIST
-Let's try something a little bit more challenging and perform well known training on MNIST database of handwritten digits. The network's structure applied for this task:
+Let's try something a little bit more challenging and perform well known training on MNIST database of handwritten digits. The network's structure applied for this task has been defined as below:
 |   Layer  |  Neurons |
 | -------- | -------- |
 |   Input  | 748   |
 |  Hidden  | 128  |
 |  Output  | 10  |
 
-The graphs below illustrate the cost function and the accuracy change over epochs, i. e., number of times the neural network came through the whole training dataset:
+
+The above architecture has been trained on exactly 10,000 handwritten digits. The graphs below illustrate the cost function and the accuracy change over epochs, i. e., number of times the neural network came through the whole training dataset:
 <p align="center"><img src="Plots/mnist_cost.png" width="500" class="center"/></p>
 <p align="center"><img src="Plots/mnist_accuracy.png" width="500" class="center"/></p>
 
