@@ -20,7 +20,7 @@ The neural network learns by the backpropagation algorithm. Its purpose is to de
 \frac{\partial C}{\partial w_{jk}^{l}} = w_{k}^{l-1} \delta_{j}^{l}
 ```
 
-These nicely formed equations appears in the code in a following form:
+These nicely formed equations appear in the code in a following form:
 ```math
 \delta^{L} = (a^{L} - y) \odot \sigma ' (z^{L})
 ```
