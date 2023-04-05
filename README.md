@@ -159,9 +159,11 @@ The solution of above problems proves that the simplest neural network form can 
 
 
 ## References
-[1] http://neuralnetworksanddeeplearning.com/
+[1] http://neuralnetworksanddeeplearning.com
 
-[2] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+[2] https://www.youtube.com/watch?v=aircAruvnKk
 
-[3] https://playground.tensorflow.org
+[3] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+[4] https://playground.tensorflow.org
 
