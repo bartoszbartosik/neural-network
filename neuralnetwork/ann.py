@@ -5,7 +5,7 @@ from typing import List, Callable
 import matplotlib.pyplot as plt
 import numpy as np
 
-from neuralnetwork.layer import Layer
+from neuralnetwork.layers.layer import Layer
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -33,11 +33,9 @@ def derivative(function: Callable, x: np.ndarray):
             return 1
 
 
-class FeedforwardNeuralNetwork:
+class ANN:
 
     def __init__(self):
-
-
         # INITIALIZE LAYERS
         self.layers: List[Layer] = []
 

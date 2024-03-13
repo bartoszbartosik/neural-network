@@ -10,11 +10,7 @@ class Neuron:
         self.input_array = input_array
 
         # INITIALIZE WEIGHTS
-        # Weights number
-        weights_number = len(input_array)
-
-        # Weights array
-        self.weights = np.random.uniform(low=-1, high=1, size=weights_number)
+        self.weights = np.random.uniform(low=-1, high=1, size=len(input_array))
 
         # INITIALIZE BIAS
         self.bias = np.random.uniform(low=-1, high=1)

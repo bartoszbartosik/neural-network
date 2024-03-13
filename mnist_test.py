@@ -2,7 +2,7 @@ import numpy as np
 
 from PIL import Image
 
-from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
+from neuralnetwork.ann import ANN
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -14,6 +14,7 @@ from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
 training_data_npz = np.load('training_data/mnist.npz')
 
 input_data = [x.flatten()/255 for x in training_data_npz['x_test']]
+print(len(input_data))
 
 output_data = []
 for value in training_data_npz['y_test']:
@@ -58,30 +59,30 @@ test_own = (
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
-ann = FeedforwardNeuralNetwork()
+ann = ANN()
 
 # Input layer
 ann.add_layer(784, activation_function='')
 
 # Hidden layers
-
-ann.add_layer(128, activation_function='sigmoid')
+ann.add_layer(300, activation_function='sigmoid')
+ann.add_layer(100, activation_function='sigmoid')
 
 # Output layer
 ann.add_layer(10, activation_function='sigmoid')
 
 
-ann.load_network('mnist-128')
+ann.load_network('mnist-300-100')
 
 # Train neural network with given parameters
-# ann.train(training_data,
-#           epochs=10,
-#           learning_ratio=0.5,
-#           plot_cost=True,
-#           plot_accuracy=True,
-#           discretize_accuracy=False)
-#
-# ann.save_network('mnist-128')
+ann.train(training_data,
+          epochs=5,
+          learning_ratio=0.1,
+          plot_cost=True,
+          plot_accuracy=True,
+          discretize_accuracy=False)
+
+ann.save_network('mnist-300-100')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

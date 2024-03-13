@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
+from neuralnetwork.ann import ANN
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A S   # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # #   T R A I N I N G   D A T A   # # # # # # # # # # # # # # # # # # # # # #
 
 # # # # # # # # #
 # generate data #
@@ -51,7 +51,7 @@ plt.show()
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
 
 # Initialize neural network
-ann = FeedforwardNeuralNetwork()
+ann = ANN()
 
 # Input layer
 ann.add_layer(2, activation_function='')

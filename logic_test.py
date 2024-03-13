@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from neuralnetwork.feedforwardneuralnetwork import FeedforwardNeuralNetwork
+from neuralnetwork.ann import ANN
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -31,7 +31,7 @@ training_data = (
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
-ann = FeedforwardNeuralNetwork()
+ann = ANN()
 
 # Input layer
 ann.add_layer(3, activation_function='')
