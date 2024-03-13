@@ -4,6 +4,7 @@ import numpy as np
 
 from neuralnetwork.neuron import Neuron
 
+
 class Layer:
 
     def __init__(self, input_array: np.ndarray, neurons_number: int, activation_function: Callable):
@@ -12,7 +13,7 @@ class Layer:
         self.size = len(self.neurons)
         self.activation_function = activation_function
 
-    def toarray(self):
+    def array(self):
         return np.array([neuron.value for neuron in self.neurons])
 
     def feedforward(self):

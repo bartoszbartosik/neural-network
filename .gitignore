@@ -1,0 +1,6 @@
+.idea/
+references/
+__pycache__/
+test/__pycache__/
+*pdf
+resources/

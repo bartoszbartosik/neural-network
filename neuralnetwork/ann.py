@@ -21,6 +21,7 @@ def relu(x):
     else:
         return x
 
+
 # Return derivative value of a given function in a given point
 def derivative(function: Callable, x: np.ndarray):
     if function.__name__ == 'sigmoid':
@@ -43,7 +44,7 @@ class FeedforwardNeuralNetwork:
 
     def add_layer(self, neurons_number: int, activation_function: str):
         """
-        Add new layer with consisting of given number of neurons and their activation function.
+        Add new layer consisting of given number of neurons and their activation function.
         """
         function = None
         if activation_function == 'sigmoid':
@@ -57,7 +58,7 @@ class FeedforwardNeuralNetwork:
                                      neurons_number=neurons_number,
                                      activation_function=relu))
         else:
-            self.layers.append(Layer(input_array=self.layers[-1].toarray(),
+            self.layers.append(Layer(input_array=self.layers[-1].array(),
                                      neurons_number=neurons_number,
                                      activation_function=function))
 
@@ -110,14 +111,14 @@ class FeedforwardNeuralNetwork:
         Predict output of a neural network for a given input
         """
         self.feedforward(input_data)
-        return self.layers[-1].toarray()
+        return self.layers[-1].array()
 
 
     def feedforward(self, input_data):
         for neuron, new_input in zip(self.layers[0].neurons, input_data):
             neuron.value = new_input
         for i in range(1, len(self.layers)):
-            self.layers[i].input_array = self.layers[i - 1].toarray()
+            self.layers[i].input_array = self.layers[i - 1].array()
             self.layers[i].feedforward()
 
 
@@ -134,7 +135,7 @@ class FeedforwardNeuralNetwork:
             self.feedforward(input_data)
 
             # Get the outcome of the above
-            actual_output = self.layers[-1].toarray()
+            actual_output = self.layers[-1].array()
 
             # Compare it with the expected outcome
             error: np.ndarray = (actual_output - output_data)**2/2
@@ -160,12 +161,12 @@ class FeedforwardNeuralNetwork:
 
             if discretize:
                 # Actual output
-                actual_output = np.round(self.layers[-1].toarray())
+                actual_output = np.round(self.layers[-1].array())
                 # Expected output
                 expected_output = output_data
             else:
                 # Actual output
-                actual_output = np.argmax(self.layers[-1].toarray())
+                actual_output = np.argmax(self.layers[-1].array())
                 # Expected output
                 expected_output = np.argmax(output_data)
 
@@ -204,10 +205,10 @@ class FeedforwardNeuralNetwork:
             inputs_l = self.layers[l].get_inputs()
 
             # Get the current layer's values
-            outputs_l = self.layers[l].toarray()
+            outputs_l = self.layers[l].array()
 
             # Get the previous layer's values
-            outputs_l_prev = self.layers[l-1].toarray()
+            outputs_l_prev = self.layers[l-1].array()
 
             # Get the current layer's activation function
             activation_function = self.layers[l].activation_function
@@ -264,7 +265,6 @@ class FeedforwardNeuralNetwork:
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # #   S A V E   &   L O A D   # # # # # # # # # # # # # # # # # # # # # #
-
     def save_network(self, filename, filepath = 'saved/'):
         """
         Save current Neural Network's architecture.
