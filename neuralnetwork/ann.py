@@ -5,32 +5,7 @@ from typing import List, Callable
 import matplotlib.pyplot as plt
 import numpy as np
 
-from neuralnetwork.layers.layer import Layer
-
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# # # # # # # # # # # # # # # # # # # #   S T A T I C   F U N C T I O N S   # # # # # # # # # # # # # # # # # # # #
-def sigmoid(x):
-    return 1/(1+np.exp(-x))
-
-
-# Rectified Linear Unit
-def relu(x):
-    if x <= 0:
-        return 0
-    else:
-        return x
-
-
-# Return derivative value of a given function in a given point
-def derivative(function: Callable, x: np.ndarray):
-    if function.__name__ == 'sigmoid':
-        return function(x)*(1-function(x))
-    elif function.__name__ == 'relu':
-        if x <= 0:
-            return 0
-        else:
-            return 1
+from neuralnetwork.layers import Layer
 
 
 class ANN:
@@ -40,25 +15,15 @@ class ANN:
         self.layers: List[Layer] = []
 
 
-    def add_layer(self, neurons_number: int, activation_function: str):
+    def add_layer(self, layer: Layer) -> None:
         """
         Add new layer consisting of given number of neurons and their activation function.
         """
-        function = None
-        if activation_function == 'sigmoid':
-            function = sigmoid
-        elif activation_function == 'relu':
-
-            function = relu
-
         if len(self.layers) == 0:
-            self.layers.append(Layer(input_array=np.empty(neurons_number),
-                                     neurons_number=neurons_number,
-                                     activation_function=relu))
+            self.layers.append(layer)
         else:
-            self.layers.append(Layer(input_array=self.layers[-1].array(),
-                                     neurons_number=neurons_number,
-                                     activation_function=function))
+            layer.input_data = self.layers[-1].values
+            self.layers.append(layer)
 
 
     def train(self, training_data, epochs, learning_ratio, plot_cost=False, plot_accuracy=False, discretize_accuracy=False):
@@ -104,20 +69,25 @@ class ANN:
             plt.show()
 
 
-    def predict_output(self, input_data):
+    def __build_layers(self):
+        for i in range(1, len(self.layers[1:])+1):
+            self.layers[i].input_data = self.layers[i-1].values
+            self.layers[i].init_params()
+
+
+    def compile(self):
+        self.__build_layers()
+
+    def predict(self, input_data: np.ndarray) -> np.ndarray:
         """
         Predict output of a neural network for a given input
         """
-        self.feedforward(input_data)
-        return self.layers[-1].array()
-
-
-    def feedforward(self, input_data):
-        for neuron, new_input in zip(self.layers[0].neurons, input_data):
-            neuron.value = new_input
-        for i in range(1, len(self.layers)):
-            self.layers[i].input_array = self.layers[i - 1].array()
+        self.layers[0].values = input_data
+        for i in range(1, len(self.layers[1:])+1):
+            self.layers[i].input_data = self.layers[i-1].values
             self.layers[i].feedforward()
+
+        return self.layers[-1].values
 
 
     def total_cost(self, training_data):
@@ -209,7 +179,7 @@ class ANN:
             outputs_l_prev = self.layers[l-1].array()
 
             # Get the current layer's activation function
-            activation_function = self.layers[l].activation_function
+            activation_function = self.layers[l].activation
 
             # CALCULATE ERROR IN THE L-TH LAYER
             # Output layer
@@ -222,7 +192,7 @@ class ANN:
                 # Initialize error array in the given layer
                 d_l_temp = []
                 # Find error of each neuron in the given layer and append it to the layer errors
-                for neuron_index in range(self.layers[l].neurons.size):
+                for neuron_index in range(self.layers[l].neurons):
                     w_previous = [neuron.weights[neuron_index] for neuron in self.layers[l + 1].neurons]
                     d_l_temp.append(np.dot(w_previous, grad_b[-1]))
                 d_l = np.array(d_l_temp).flatten()
@@ -268,7 +238,7 @@ class ANN:
         Save current Neural Network's architecture.
         """
         network = {
-            'layers': [(layer.size, layer.activation_function.__name__) for layer in self.layers],
+            'layers': [(layer.neurons, layer.activation.__name__) for layer in self.layers],
             'weights': [layer.get_weights().tolist() for layer in self.layers[1:]],
             'biases': [layer.get_biases().tolist() for layer in self.layers[1:]]
         }
