@@ -5,7 +5,8 @@ from typing import List, Callable
 import matplotlib.pyplot as plt
 import numpy as np
 
-from neuralnetwork.layers import Layer
+from .layers import Layer
+from .activations import *
 
 
 class ANN:
@@ -88,33 +89,6 @@ class ANN:
             self.layers[i].feedforward()
 
         return self.layers[-1].values
-
-
-    def total_cost(self, training_data):
-        """
-        Return total average cost function value for all the training data
-        """
-        # Initialize error array
-        errors = []
-
-        # Calculate error for each training data
-        for input_data, output_data in zip(training_data[0], training_data[1]):
-            # Pass the input data to the neural network
-            self.feedforward(input_data)
-
-            # Get the outcome of the above
-            actual_output = self.layers[-1].array()
-
-            # Compare it with the expected outcome
-            error: np.ndarray = (actual_output - output_data)**2/2
-
-            # Append it to array error
-            errors.append(error)
-
-        errors = np.mean(np.array(errors), axis=0)
-        errors = np.sum(errors)
-
-        return errors
 
 
     def accuracy(self, training_data, discretize):

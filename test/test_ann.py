@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 
 from neuralnetwork import ANN
+from neuralnetwork import losses
 from neuralnetwork.layers import InputLayer, Dense
 from neuralnetwork.activations import sigmoid, linear
 import keras
@@ -12,11 +13,8 @@ class TestFeedforward(unittest.TestCase):
 
     def setUp(self):
 
-        # Input data
-        self.x = np.array([1, 0, 1, 0])
-
-        # Define shape
-        input_shape = self.x.shape
+        # Define input shape
+        input_shape = (4,)
 
         # Define weights
         weights_layer_1 = np.array([
@@ -57,10 +55,42 @@ class TestFeedforward(unittest.TestCase):
         self.kerasnet.layers[1].set_weights([np.transpose(weights_layer_2), np.array([0, 0, 0])])
 
 
-
     def test_feedforward(self):
+        # Define input
+        x = np.array([0, 1, 1, 0])
+
         # Predict
-        keras_prediction = self.kerasnet.predict(self.x.reshape(1, -1))
-        ann_prediction = self.net.predict(self.x).reshape(1, -1)
+        keras_prediction = self.kerasnet.predict(x.reshape(1, -1))
+        ann_prediction = self.net.predict(x).reshape(1, -1)
         # Test
         np.testing.assert_almost_equal(ann_prediction, keras_prediction)
+
+
+    def test_loss(self):
+        # Define input
+        x = np.array([
+            [0, 0.8, 0.6, 0],
+            [0.9, 0.1, 0.1, 0.85]
+        ])
+
+        # Define desired output
+        y = np.array([
+            [0, 0, 1],
+            [1, 0, 1]
+        ])
+
+        # Compute loss
+        net_loss = losses.mse(y, [self.net.predict(x[0]), self.net.predict(x[1])])
+
+        # Compute reference loss
+        loss = keras.losses.MeanSquaredError()
+        optimizer = keras.optimizers.SGD()
+        self.kerasnet.compile(loss=loss, optimizer=optimizer)
+        kerasnet_loss = loss(y, self.kerasnet.predict(x)).numpy()
+
+        # Test
+        assert np.float32(net_loss) == kerasnet_loss
+
+
+    
+
