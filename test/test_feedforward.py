@@ -13,7 +13,6 @@ import keras
 class TestFeedforward(unittest.TestCase):
 
     def setUp(self):
-
         # Define input shape
         input_shape = (4,)
 
@@ -30,6 +29,8 @@ class TestFeedforward(unittest.TestCase):
             [0.35, 0.35, 0.35]          # Neuron #3
         ])
 
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
         # Build model
         self.net = ANN()
         self.net.add_layer(InputLayer(input_shape=input_shape))
@@ -43,6 +44,7 @@ class TestFeedforward(unittest.TestCase):
         self.net.layers[2].w = weights_layer_2
         self.net.layers[2].b = 0
 
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         # Build reference model
         self.kerasnet = keras.models.Sequential()
@@ -56,33 +58,12 @@ class TestFeedforward(unittest.TestCase):
         self.kerasnet.layers[1].set_weights([np.transpose(weights_layer_2), np.array([0, 0, 0])])
 
 
-    def test_backpropagate(self):
+    def test_feedforward(self):
         # Define input
-        x = np.array([0, 0.8, 0.6, 0])
+        x = np.array([-19, 4, 10, 0.11])
 
-        # Define desired output
-        y = np.array([0, 0, 1])
-
-        # Learning rate
-        eta = 0.1
-
-        # Feedforward
-        self.net.predict(x)
-
-        # Back-propagate
-        self.net.sgd(y, eta)
-
-        # Compute reference loss
-        loss = keras.losses.MeanSquaredError()
-        optimizer = keras.optimizers.SGD(learning_rate=eta)
-        self.kerasnet.compile(loss=loss, optimizer=optimizer)
-        self.kerasnet.fit(x.reshape(1, -1), y.reshape(1, -1), epochs=1)
-        weights = self.kerasnet.get_weights()
-        self.kerasnet.summary()
-
-
-
-
-
-
-
+        # Predict
+        keras_prediction = self.kerasnet.predict(x.reshape(1, -1))
+        net_prediction = self.net.predict(x).reshape(1, -1)
+        # Test
+        np.testing.assert_almost_equal(np.float32(net_prediction), np.float32(keras_prediction))

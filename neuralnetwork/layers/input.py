@@ -11,3 +11,5 @@ class InputLayer(Layer):
         super().__init__(neurons=np.prod([i for i in input_shape]),
                          activation=linear)
 
+        self.a = np.zeros(input_shape)
+

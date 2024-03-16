@@ -13,22 +13,23 @@ import keras
 class TestFeedforward(unittest.TestCase):
 
     def setUp(self):
-
         # Define input shape
         input_shape = (4,)
 
         # Define weights
         weights_layer_1 = np.array([
-            [0.5, 0.5, 0.5, 0.5],       # Neuron #1
-            [0.25, 0.25, 0.25, 0.25],   # Neuron #2
-            [0.35, 0.35, 0.35, 0.35]    # Neuron #3
+            [0.5, 0.5, 0.5, 0.5],  # Neuron #1
+            [0.25, 0.25, 0.25, 0.25],  # Neuron #2
+            [0.35, 0.35, 0.35, 0.35]  # Neuron #3
         ])
 
         weights_layer_2 = np.array([
-            [0.5, 0.5, 0.5],            # Neuron #1
-            [0.25, 0.25, 0.25],         # Neuron #2
-            [0.35, 0.35, 0.35]          # Neuron #3
+            [0.5, 0.5, 0.5],  # Neuron #1
+            [0.25, 0.25, 0.25],  # Neuron #2
+            [0.35, 0.35, 0.35]  # Neuron #3
         ])
+
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         # Build model
         self.net = ANN()
@@ -43,6 +44,7 @@ class TestFeedforward(unittest.TestCase):
         self.net.layers[2].w = weights_layer_2
         self.net.layers[2].b = 0
 
+        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         # Build reference model
         self.kerasnet = keras.models.Sequential()
@@ -56,33 +58,27 @@ class TestFeedforward(unittest.TestCase):
         self.kerasnet.layers[1].set_weights([np.transpose(weights_layer_2), np.array([0, 0, 0])])
 
 
-    def test_backpropagate(self):
+    def test_loss(self):
         # Define input
-        x = np.array([0, 0.8, 0.6, 0])
+        x = np.array([
+            [0, 0.8, 0.6, 0],
+            [0.9, 0.1, 0.1, 0.85]
+        ])
 
         # Define desired output
-        y = np.array([0, 0, 1])
+        y = np.array([
+            [0, 0, 1],
+            [1, 0, 1]
+        ])
 
-        # Learning rate
-        eta = 0.1
-
-        # Feedforward
-        self.net.predict(x)
-
-        # Back-propagate
-        self.net.sgd(y, eta)
+        # Compute loss
+        net_loss = losses.mse(y, [self.net.predict(x[0]), self.net.predict(x[1])])
 
         # Compute reference loss
         loss = keras.losses.MeanSquaredError()
-        optimizer = keras.optimizers.SGD(learning_rate=eta)
+        optimizer = keras.optimizers.SGD()
         self.kerasnet.compile(loss=loss, optimizer=optimizer)
-        self.kerasnet.fit(x.reshape(1, -1), y.reshape(1, -1), epochs=1)
-        weights = self.kerasnet.get_weights()
-        self.kerasnet.summary()
+        kerasnet_loss = loss(y, self.kerasnet.predict(x)).numpy()
 
-
-
-
-
-
-
+        # Test
+        np.testing.assert_almost_equal(net_loss, kerasnet_loss)
