@@ -1,22 +1,15 @@
+from typing import Callable
+
 import numpy as np
 
 
-def mse(target, prediction):
+def d(function: Callable, prediction: np.ndarray, target: np.ndarray):
+    match function.__name__:
+        case 'mse': return 2*(prediction - target)
+
+
+def mse(prediction, target):
     """
     Return total Mean Squared Error
     """
-    # Initialize error array
-    errors = []
-
-    # Calculate error for each training data
-    for y, a in zip(target, prediction):
-        # Compare it with the expected outcome
-        error: np.ndarray = (y - a)**2
-
-        # Append it to array error
-        errors.append(error)
-
-    errors = np.mean(np.array(errors), axis=0)
-    errors = np.sum(errors)/errors.size
-
-    return errors
+    return np.mean((target - prediction)**2)
