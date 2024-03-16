@@ -6,7 +6,7 @@ FEEDFORWARD NEURAL NETWORK
 In the files above you'll find the most basic feedforward neural network. It has been created without usage of external libraries, like tensorflow, so that you could delve into how I managed to understand concept of this fascinating tool's principle of operation.
 
 ## Background
-The neural network learns by a backpropagation algorithm. Its purpose is to determine the cost function gradient with respect to the network's both weights and biases (separately). Equations breathing life into plain neural network architecture have been listed below:
+The neural network learns by the backpropagation algorithm. Its purpose is to determine the cost function gradient with respect to the network's both weights and biases (separately). Equations breathing life into plain neural network architecture have been listed below:
 ```math
 \delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L})
 ```
@@ -20,18 +20,18 @@ The neural network learns by a backpropagation algorithm. Its purpose is to dete
 \frac{\partial C}{\partial w_{jk}^{l}} = w_{k}^{l-1} \delta_{j}^{l}
 ```
 
-These nicely formed equations appears in the code in a following form:
+These nicely formed equations appear in the code in a following form:
 ```math
-\delta^{L} = (a^{L} - y) \odot \phi ' (z^{L})
+\delta^{L} = (a^{L} - y) \odot \sigma ' (z^{L})
 ```
 ```math
-\delta^{l} = ((w^{l+1})^{T}\delta^{l+1}) \odot \phi ' (z^{l})
+\delta^{l} = ((w^{l+1})^{T}\delta^{l+1}) \odot \sigma ' (z^{l})
 ```
 ```math
 \frac{\partial C}{\partial b^{l}} = \delta^{l} 
 ```
 ```math
-\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \phi ' (z^{l}))
+\frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \sigma ' (z^{l}))
 ```
 
 where:
@@ -42,7 +42,7 @@ where:
 - $a^{L}$: output vector of output layer,
 - $a^{l}$: output vector of l-th layer,
 - $y$: expected output,
-- $\phi()$: activation function
+- $\sigma()$: sigmoid activation function
 - $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases
 - $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights
 
@@ -64,7 +64,7 @@ Let's verify if our neural network works in a simple scenario. Suppose we have a
 | [0, 1, 0]  | [1, 0]  |
 
 We could see, that the way the magic box works is that it just flips the first and second bit and rejects the third column.
-The neural network, which stands for our brain, tells us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
+Our own neural networks tell us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
 
 In order to solve this task, the network's architecture has been defined as below:
 | Layer  | Neurons |
@@ -123,11 +123,47 @@ The neural network structure has been defined as follows:
 And output for 2000 randomly generated test data:
 <p align="center"><img src="Plots/circles_4_test_data.png" width="500" class="center"/></p>
 
+### MNIST
+Let's try something a little bit more challenging and perform well known training on MNIST database of handwritten digits. The network's structure applied for this task has been defined as below:
+|   Layer  |  Neurons |
+| -------- | -------- |
+|   Input  | 748   |
+|  Hidden  | 128  |
+|  Output  | 10  |
+
+
+The above architecture has been trained on exactly 10,000 handwritten digits. The graphs below illustrate the cost function and the accuracy change over epochs, i. e., number of times the neural network came through the whole training dataset:
+<p align="center"><img src="Plots/mnist_cost.png" width="500" class="center"/></p>
+<p align="center"><img src="Plots/mnist_accuracy.png" width="500" class="center"/></p>
+
+The results for a data prepared for the testing purpose:
+|   Input  |  Output | Input | Output
+| -------- | -------- | -------- | -------- |
+|  <p align="center"><img src="training_data/mnist_digits/0_test.png" width="50" class="center"/></p>  | 0 | <p align="center"><img src="training_data/mnist_digits/5_test.png" width="50" class="center"/></p>  | 5 | 
+|  <p align="center"><img src="training_data/mnist_digits/1_test.png" width="50" class="center"/></p>  | 1 | <p align="center"><img src="training_data/mnist_digits/6_test.png" width="50" class="center"/></p>  | 6 |
+|  <p align="center"><img src="training_data/mnist_digits/2_test.png" width="50" class="center"/></p>  | 2 |  <p align="center"><img src="training_data/mnist_digits/7_test.png" width="50" class="center"/></p>  | 7 |
+|  <p align="center"><img src="training_data/mnist_digits/3_test.png" width="50" class="center"/></p>  | 3 |  <p align="center"><img src="training_data/mnist_digits/8_test.png" width="50" class="center"/></p>  | 8 |
+|  <p align="center"><img src="training_data/mnist_digits/4_test.png" width="50" class="center"/></p>  | 4 |  <p align="center"><img src="training_data/mnist_digits/9_test.png" width="50" class="center"/></p>  | 3 |
+
+
+90% accuracy for a simple dataset which hasn't been seen by this network before sounds really nice, especially taking into account the basic structure!
+
+### Conclusions
+The solution of above problems proves that the simplest neural network form can already bring satisfying outcomes. The techniques which could significantly improve the learning process as well as the accuracy are:
+- Cross-entropy cost function:
+  its gradient with respect to weights and biases is free of the $\sigma ' ()$ term which for quadratic cost function causes the slowdown of learning process for those of their values, which are located far away from the minimum.
+- Softmax output layer:
+  it's an activation function which normalizes the neural network output providing simplified interpretation of the received output - it could be interpreted as a measure of probability with which the net classifies the given input as computed output.
+- Regularization:
+  it's an additional term in the cost function penalizing higher values of weights and biases. This technique helps with overfitting problems and makes the network more generalized.
+
 
 ## References
-[1] http://neuralnetworksanddeeplearning.com/
+[1] http://neuralnetworksanddeeplearning.com
 
-[2] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+[2] https://www.youtube.com/watch?v=aircAruvnKk
 
-[3] https://playground.tensorflow.org
+[3] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
+
+[4] https://playground.tensorflow.org
 
