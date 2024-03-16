@@ -7,31 +7,32 @@ import numpy as np
 class Layer(ABC):
 
     def __init__(self, neurons: int, activation: Callable, weights: np.ndarray = None, bias: float = None):
-        self.input_data: np.ndarray = np.zeros([])
-        self.neurons = neurons
+        self.n = neurons
 
-        self.weights: np.ndarray = weights
-        self.bias: float = bias
+        self.w: np.ndarray = weights
+        self.b: float = bias
 
         self.activation = activation
-        self.values: np.ndarray = np.zeros(neurons)
+        self.z: np.ndarray = np.zeros(neurons)
+        self.a: np.ndarray = np.zeros(neurons)
 
 
-    def init_params(self):
-        if self.weights is None:
-            self.weights = np.random.rand(self.neurons, len(self.input_data))
-        if self.bias is None:
-            self.bias = np.random.random()*2 - 1
+    def init_params(self, a_):
+        if self.w is None:
+            self.w = np.random.rand(self.n, len(a_)) * 2 - 1
+        if self.b is None:
+            self.b = np.random.random() * 2 - 1
 
 
-    def feedforward(self):
-        self.values = self.activation(np.dot(self.weights, self.input_data) + self.bias)
+    def feedforward(self, a_):
+        self.z = np.dot(self.w, a_) + self.b
+        self.a = self.activation(self.z)
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # #   O V E R W R I T T E N   F U N C T I O N S   # # # # # # # # # # # # # # # # #
     def __str__(self) -> str:
-        return 'Layer: [values: {}]'.format(self.values)
+        return 'Layer: [{}]'.format(self.a)
 
     def __repr__(self):
         return self.__str__()
