@@ -1,40 +1,38 @@
+from abc import ABC
 from typing import Callable
 
 import numpy as np
 
-from neuralnetwork.neuron import Neuron
+
+class Layer(ABC):
+
+    def __init__(self, neurons: int, activation: Callable, weights: np.ndarray = None, bias: float = None):
+        self.n = neurons
+
+        self.w: np.ndarray = weights
+        self.b: float = bias
+
+        self.activation = activation
+        self.z: np.ndarray = np.zeros(neurons)
+        self.a: np.ndarray = np.zeros(neurons)
 
 
-class Layer:
+    def init_params(self, a_):
+        if self.w is None:
+            self.w = np.random.rand(self.n, len(a_)) * 2 - 1
+        if self.b is None:
+            self.b = np.random.random() * 2 - 1
 
-    def __init__(self, input_array: np.ndarray, neurons_number: int, activation_function: Callable):
-        self.input_array = input_array
-        self.neurons = np.array([Neuron(input_array, activation_function) for _ in range(neurons_number)])
-        self.size = len(self.neurons)
-        self.activation_function = activation_function
 
-    def array(self):
-        return np.array([neuron.value for neuron in self.neurons])
-
-    def feedforward(self):
-        for neuron in self.neurons:
-            neuron.input_array = self.input_array
-            neuron.compute_value()
-
-    def get_weights(self):
-        return np.array([neuron.weights for neuron in self.neurons])
-
-    def get_biases(self):
-        return np.array([neuron.bias for neuron in self.neurons])
-
-    def get_inputs(self):
-        return np.array([neuron.input_value for neuron in self.neurons])
+    def feedforward(self, a_):
+        self.z = np.dot(self.w, a_) + self.b
+        self.a = self.activation(self.z)
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # #   O V E R W R I T T E N   F U N C T I O N S   # # # # # # # # # # # # # # # # #
     def __str__(self) -> str:
-        return 'Layer: [Neurons: {}]'.format([str(neuron.value) for neuron in self.neurons])
+        return 'Layer: [{}]'.format(self.a)
 
     def __repr__(self):
         return self.__str__()

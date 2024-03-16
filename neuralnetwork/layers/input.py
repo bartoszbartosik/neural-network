@@ -2,10 +2,14 @@ from typing import Callable
 
 import numpy as np
 
-from neuralnetwork.layers.layer import Layer
+from neuralnetwork.layers import Layer
+from neuralnetwork.activations import *
 
 
 class InputLayer(Layer):
-    def __init__(self, input_array: np.ndarray, neurons_number: int, activation_function: Callable):
-        super.__init__()
-        super().__init__(input_array, neurons_number, activation_function)
+    def __init__(self, input_shape: tuple):
+        super().__init__(neurons=np.prod([i for i in input_shape]),
+                         activation=linear)
+
+        self.a = np.zeros(input_shape)
+
