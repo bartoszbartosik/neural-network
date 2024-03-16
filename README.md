@@ -46,6 +46,9 @@ Training parameters:
 - optimizer: SGD,
 - loss function: MSE.
 
+Training data: 1000 random samples of (2, 1) shape.
+Test data: 2000 random samples of (2, 1) shape.
+
 The result of classification for 2000 randomly generated test data:
 <p align="center"><img src="plots/test1.png" width="500" class="center"/></p>
 
