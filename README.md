@@ -1,12 +1,8 @@
-<h1 align="center">
-FEEDFORWARD NEURAL NETWORK
-</h1>
 
-## Hello!
-In the files above you'll find the most basic feedforward neural network. It has been created without usage of external libraries, like tensorflow, so that you could delve into how I managed to understand concept of this fascinating tool's principle of operation.
+# Neural Network
+The project contains neural network API allowing to build custom architecture deep learning models. The source code is written from scratch using _numpy_ which allows to investigate the model thoroughly during the learning process.
 
-## Background
-The neural network learns by the backpropagation algorithm. Its purpose is to determine the cost function gradient with respect to the network's both weights and biases (separately). Equations breathing life into plain neural network architecture have been listed below:
+Neural network learns by a backpropagation algorithm - it is used to determine the cost function gradient with respect to the network's both weights and biases. The gradient is then utilized by the _Stochastic Gradient Descnet_ algorithm, which updates network parameters with new values. The program leverages the below equations __[1]__:
 ```math
 \delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L})
 ```
@@ -17,6 +13,7 @@ The neural network learns by the backpropagation algorithm. Its purpose is to de
 \frac{\partial C}{\partial b_{j}^{l}} = \delta_{j}^{l} 
 ```
 ```math
+<<<<<<< HEAD
 \frac{\partial C}{\partial w_{jk}^{l}} = w_{k}^{l-1} \delta_{j}^{l}
 ```
 
@@ -32,138 +29,55 @@ These nicely formed equations appear in the code in a following form:
 ```
 ```math
 \frac{\partial C}{\partial w^{l}} = a^{l-1} \otimes (\delta^{l} \sigma ' (z^{l}))
+=======
+\frac{\partial C}{\partial w_{jk}^{l}} = a_{k}^{l-1} \delta_{j}^{l}
+>>>>>>> feature/no-ref/refactorization
 ```
 
 where:
+- $\nabla_{a}C$: cost function gradient with respect to output layer activations,
 - $\delta^{L}$: error in the output layer,
 - $\delta^{l}$: error in the l-th layer,
 - $z^{L}$: input values of the output layer,
 - $z^{l}$: input values of the l-th layer,
 - $a^{L}$: output vector of output layer,
 - $a^{l}$: output vector of l-th layer,
-- $y$: expected output,
-- $\sigma()$: sigmoid activation function
-- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases
-- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights
+- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases,
+- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights.
 
-Above equations are used in the Stochastic Gradient Descent, where weights and biases are updated.
-But before we'll go too deep, let's check out how does this neural network deal with different problems.
+## Demo
+Let's take into consideration a Cartesian plane, where the coordinates are from a $\langle 0; 4 \rangle$ range. The points in this coordinate system can be classified on two groups - either yellow, or blue. Their color depends on the values of their coordinates - if they place the point inside one of the 4 circles, their colour is yellow and blue otherwise. The graph below visualizes training data with 1000 randomly generated points and their classification:
+<p align="center"><img src="plots/training1.png" width="500" class="center"/></p>
 
-## Testing
-### Logic test
+The problem has been introduced to the network of the below architecure:
+|   Layer  |  Neurons | Activation |
+| -------- | -------- | ---------- |
+|   Input  | 2   | None |
+|  Dense  | 100  | Sigmoid |
+|  Dense  | 100  | Sigmoid |
+|  Dense  | 100  | Sigmoid |
+|  Dense  | 1  | Sigmoid |
 
-Let's verify if our neural network works in a simple scenario. Suppose we have an array of 3 binary values. We put it into a magic box, close it, some magic happens, and we see that we've received an array of size 2 consisting of binary values as well. We do it for couple of different input arrays and we note what array we receive as an output:
+Training parameters:
+- epochs: 200,
+- learning rate: 0.03,
+- optimizer: SGD,
+- loss function: MSE.
 
-| Input array  | Output array |
-| ------------ | ------------ |
-| [1, 1, 0]  | [0, 0]  |
-| [1, 0, 1]  | [0, 1]  |
-| [1, 1, 1]  | [0, 0]  |
-| [0, 0, 0]  | [1, 1]  |
-| [0, 0, 1]  | [1, 1]  |
-| [0, 1, 0]  | [1, 0]  |
+Training data: 1000 random samples of (2, 1) shape.
+Test data: 2000 random samples of (2, 1) shape.
 
-We could see, that the way the magic box works is that it just flips the first and second bit and rejects the third column.
-Our own neural networks tell us that if we put, for example, [1, 0, 0] into our box, we could expect the outcome to be [0, 1].
+The result of classification for 2000 randomly generated test data:
+<p align="center"><img src="plots/test1.png" width="500" class="center"/></p>
 
-In order to solve this task, the network's architecture has been defined as below:
-| Layer  | Neurons |
-| ------ | ------- |
-| Input  | 3  |
-| Output | 2  |
-
-And the outcome:
-| Input array  | Output array |
-| ------------ | ------------ |
-| [1, 0, 0]  | [0.05 0.89]  |
-
-Seems like really simple architecture is enough for solving this task.
-Let's try something more challenging then.
-
-### Sum test
-Let's perform a task similar to the previous one, but with larger number of both input and outputs. The array analogical to the previous one, standing for a training data, has been defined as follows:
-| Input array  | Output array |
-| ------------ | ------------ |
-| [1, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]  |
-| [0, 1, 0, 0, 0, 1, 0, 0, 0]  | [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]  |
-| [0, 1, 0, 1, 1, 0, 1, 1, 0]  | [0, 0, 0, 0, 0, 1, 0, 0, 0, 0]  |
-| [0, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]  |
-| [1, 1, 0, 1, 1, 1, 0, 1, 1]  | [0, 0, 0, 0, 0, 0, 0, 1, 0, 0]  |
-| [0, 1, 0, 0, 1, 0, 0, 1, 0]  | [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]  |
-| ...  | ...  |
-
-Can you see the pattern? Looks like the output array's index corresponding to the value of 1 tells us how many ones there are in the input array. For example - in the first row of the training data the number of ones in the input array's equal to 4. That's why one appears in the output array at index of 4.
-
-Taking into account increased complexity of this task, the network's structure has been defined as below:
-|   Layer  |  Neurons |
-| -------- | -------- |
-|   Input  | 9   |
-|  Hidden  | 50  |
-|  Output  | 10  |
-
-The outcome for sample test data:
-| Input array  | Output array |
-| ------------ | ------------ |
-| [0, 0, 1, 0, 0, 1, 0, 0, 0]  | [0.   0.04 0.99 0.01 0.   0.   0.   0.   0.   0.  ]  |
-
-A value of 0.99 appears at the 2nd index of the output arrays which means that the sum of ones in the input array's equal to 2.
-
-### Cartesian plane test
-Let's create scenario which can be visualized nicer than using tables. For this purpose, let's take into account an input array consisting of 2 values in range between 0 and 4 each. The output is a single value - either 0 or 1. The graph below visualizes training data with 1000 randomly generated points and their classification which could be defined as - does the point belong to the one of the four circles?
-<p align="center"><img src="Plots/circles_4_training_data.png" width="500" class="center"/></p>
-
-The neural network structure has been defined as follows:
-|   Layer  |  Neurons |
-| -------- | -------- |
-|   Input  | 2   |
-|  Hidden  | 20  |
-|  Hidden  | 20  |
-|  Output  | 1  |
-
-And output for 2000 randomly generated test data:
-<p align="center"><img src="Plots/circles_4_test_data.png" width="500" class="center"/></p>
-
-### MNIST
-Let's try something a little bit more challenging and perform well known training on MNIST database of handwritten digits. The network's structure applied for this task has been defined as below:
-|   Layer  |  Neurons |
-| -------- | -------- |
-|   Input  | 748   |
-|  Hidden  | 128  |
-|  Output  | 10  |
-
-
-The above architecture has been trained on exactly 10,000 handwritten digits. The graphs below illustrate the cost function and the accuracy change over epochs, i. e., number of times the neural network came through the whole training dataset:
-<p align="center"><img src="Plots/mnist_cost.png" width="500" class="center"/></p>
-<p align="center"><img src="Plots/mnist_accuracy.png" width="500" class="center"/></p>
-
-The results for a data prepared for the testing purpose:
-|   Input  |  Output | Input | Output
-| -------- | -------- | -------- | -------- |
-|  <p align="center"><img src="training_data/mnist_digits/0_test.png" width="50" class="center"/></p>  | 0 | <p align="center"><img src="training_data/mnist_digits/5_test.png" width="50" class="center"/></p>  | 5 | 
-|  <p align="center"><img src="training_data/mnist_digits/1_test.png" width="50" class="center"/></p>  | 1 | <p align="center"><img src="training_data/mnist_digits/6_test.png" width="50" class="center"/></p>  | 6 |
-|  <p align="center"><img src="training_data/mnist_digits/2_test.png" width="50" class="center"/></p>  | 2 |  <p align="center"><img src="training_data/mnist_digits/7_test.png" width="50" class="center"/></p>  | 7 |
-|  <p align="center"><img src="training_data/mnist_digits/3_test.png" width="50" class="center"/></p>  | 3 |  <p align="center"><img src="training_data/mnist_digits/8_test.png" width="50" class="center"/></p>  | 8 |
-|  <p align="center"><img src="training_data/mnist_digits/4_test.png" width="50" class="center"/></p>  | 4 |  <p align="center"><img src="training_data/mnist_digits/9_test.png" width="50" class="center"/></p>  | 3 |
-
-
-90% accuracy for a simple dataset which hasn't been seen by this network before sounds really nice, especially taking into account the basic structure!
-
-### Conclusions
-The solution of above problems proves that the simplest neural network form can already bring satisfying outcomes. The techniques which could significantly improve the learning process as well as the accuracy are:
-- Cross-entropy cost function:
-  its gradient with respect to weights and biases is free of the $\sigma ' ()$ term which for quadratic cost function causes the slowdown of learning process for those of their values, which are located far away from the minimum.
-- Softmax output layer:
-  it's an activation function which normalizes the neural network output providing simplified interpretation of the received output - it could be interpreted as a measure of probability with which the net classifies the given input as computed output.
-- Regularization:
-  it's an additional term in the cost function penalizing higher values of weights and biases. This technique helps with overfitting problems and makes the network more generalized.
+Learning process on the training data:
+<p align="center"><img src="plots/anim1.gif" width="800" class="center"/></p>
 
 
 ## References
-[1] http://neuralnetworksanddeeplearning.com
+__[1]__ http://neuralnetworksanddeeplearning.com/
 
-[2] https://www.youtube.com/watch?v=aircAruvnKk
+__[2]__ https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
 
-[3] https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
-
-[4] https://playground.tensorflow.org
+__[3]__ https://playground.tensorflow.org
 
