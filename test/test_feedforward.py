@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 import neuralnetwork.losses
-from neuralnetwork import ANN
+from neuralnetwork import Network
 from neuralnetwork import losses
 from neuralnetwork.layers import InputLayer, Dense
 from neuralnetwork.activations import sigmoid, linear
@@ -32,7 +32,7 @@ class TestFeedforward(unittest.TestCase):
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         # Build model
-        self.net = ANN()
+        self.net = Network()
         self.net.add_layer(InputLayer(input_shape=input_shape))
         self.net.add_layer(Dense(3, activation=sigmoid))
         self.net.add_layer(Dense(3, activation=sigmoid))
@@ -58,12 +58,47 @@ class TestFeedforward(unittest.TestCase):
         self.kerasnet.layers[1].set_weights([np.transpose(weights_layer_2), np.array([0, 0, 0])])
 
 
-    def test_feedforward(self):
+    def test_feedforward_1(self):
         # Define input
         x = np.array([-19, 4, 10, 0.11])
 
+
         # Predict
         keras_prediction = self.kerasnet.predict(x.reshape(1, -1))
-        net_prediction = self.net.predict(x).reshape(1, -1)
+        net_prediction = self.net.predict(x.reshape(1, -1))
+        # Test
+        np.testing.assert_almost_equal(np.float32(net_prediction), np.float32(keras_prediction))
+
+
+    def test_feedforward_2(self):
+        # Define input
+        x = np.array([
+            [-19, 4, 10, 0.11],
+            [-10, -4, 15, 0.21]
+        ])
+
+
+        # Predict
+        keras_prediction = self.kerasnet.predict(x.reshape(2, -1))
+        net_prediction = self.net.predict(x.reshape(2, -1))
+        # Test
+        np.testing.assert_almost_equal(np.float32(net_prediction), np.float32(keras_prediction))
+
+
+    def test_feedforward_3(self):
+        # Define input
+        x = np.array([
+            [-19, 4, 10, 0.11],
+            [-12, -4, 15, 0.21],
+            [2, -1, 5, 0.51],
+            [1, 2, 11, 0.41],
+            [0, 3, 12, 0.01],
+            [0, -0, 1, 0.21]
+        ])
+
+
+        # Predict
+        keras_prediction = self.kerasnet.predict(x.reshape(6, -1))
+        net_prediction = self.net.predict(x.reshape(6, -1))
         # Test
         np.testing.assert_almost_equal(np.float32(net_prediction), np.float32(keras_prediction))

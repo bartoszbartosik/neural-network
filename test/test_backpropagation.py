@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 import neuralnetwork.losses
-from neuralnetwork import ANN
+from neuralnetwork import Network
 from neuralnetwork import losses
 from neuralnetwork.layers import InputLayer, Dense
 from neuralnetwork.activations import sigmoid, linear
@@ -31,7 +31,7 @@ class TestFeedforward(unittest.TestCase):
         ])
 
         # Build model
-        self.net = ANN()
+        self.net = Network()
         self.net.add_layer(InputLayer(input_shape=input_shape))
         self.net.add_layer(Dense(3, activation=sigmoid))
         self.net.add_layer(Dense(3, activation=sigmoid))
@@ -56,12 +56,12 @@ class TestFeedforward(unittest.TestCase):
         self.kerasnet.layers[1].set_weights([np.transpose(weights_layer_2), np.array([0, 0, 0])])
 
 
-    def test_backpropagate(self):
+    def test_backpropagate_1(self):
         # Define input
-        x = np.array([0, 0.8, 0.6, 0])
+        x = np.array([0, 0.8, 0.6, 0]).reshape(1, -1)
 
         # Define desired output
-        y = np.array([0, 0, 1])
+        y = np.array([0, 0, 1]).reshape(1, -1)
 
         # Learning rate
         eta = 0.1
@@ -76,10 +76,50 @@ class TestFeedforward(unittest.TestCase):
         loss = keras.losses.MeanSquaredError()
         optimizer = keras.optimizers.SGD(learning_rate=eta)
         self.kerasnet.compile(loss=loss, optimizer=optimizer)
-        self.kerasnet.fit(x.reshape(1, -1), y.reshape(1, -1), epochs=1)
+        self.kerasnet.fit(x, y, epochs=1)
         weights = self.kerasnet.get_weights()
         self.kerasnet.summary()
 
+
+    def test_backpropagate_2(self):
+        # Define input
+        x = np.array([
+            [0, 0.8, 0.6, 0],
+            [1, 0.5, 0.6, 1],
+            [1, 0.1, 0.1, 1],
+            [0, 0.8, 0.1, 0],
+            [0, 0.7, 0.9, 1],
+            [1, 0.2, 0.3, 0],
+        ])
+
+        # Define desired output
+        y = np.array([
+            [0, 0, 1],
+            [1, 1, 1],
+            [1, 0, 1],
+            [0, 0, 0],
+            [0, 1, 0],
+            [0, 1, 1],
+        ])
+
+        # Learning rate
+        eta = 0.1
+
+        # Feedforward
+        self.net.predict(x)
+
+        # Back-propagate
+        self.net.sgd(y, eta)
+
+        self.net.fit(x, y, 6, 1, 0.1)
+
+        # Compute reference loss
+        loss = keras.losses.MeanSquaredError()
+        optimizer = keras.optimizers.SGD(learning_rate=eta)
+        self.kerasnet.compile(loss=loss, optimizer=optimizer)
+        self.kerasnet.fit(x, y, epochs=1)
+        weights = self.kerasnet.get_weights()
+        self.kerasnet.summary()
 
 
 

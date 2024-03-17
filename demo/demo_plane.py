@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from matplotlib import pyplot as plt, animation
 
-from neuralnetwork import ANN
+from neuralnetwork import Network
 from neuralnetwork import losses
 from neuralnetwork import layers
 from neuralnetwork.activations import sigmoid
@@ -16,13 +16,14 @@ def main():
     # # # # # # # # #
     # generate data #
     # # # # # # # # #
-    input_array = np.random.uniform(low=0, high=4, size=(1000, 2))
+    train_samples = 1000
+    input_array = np.random.uniform(low=0, high=4, size=(train_samples, 2))
 
-    output_array = [1 if (x-1)**2 + (y-3)**2 <= 0.5 or
+    output_array = np.array([1 if (x-1)**2 + (y-3)**2 <= 0.5 or
                          (x-3)**2 + (y-1)**2 <= 0.5 or
                          (x-1)**2 + (y-1)**2 <= 0.5 or
                          (x-3)**2 + (y-3)**2 <= 0.5
-                    else 0 for (x, y) in input_array ]
+                    else 0 for (x, y) in input_array ]).reshape(train_samples, -1)
 
     # np.savez('training_data/plane_test.npz', input_data=input_array, output_data=output_array)
 
@@ -57,40 +58,34 @@ def main():
     # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # #
 
     # Initialize neural network
-    ann = ANN()
+    net = Network()
 
     # Input layer
-    ann.add_layer(layers.InputLayer((2,)))
+    net.add_layer(layers.InputLayer((2,)))
 
     # Hidden layers
-    ann.add_layer(layers.Dense(100, activation=sigmoid))
-    ann.add_layer(layers.Dense(100, activation=sigmoid))
-    ann.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
 
     # Output layer
-    ann.add_layer(layers.Dense(1, activation=sigmoid))
+    net.add_layer(layers.Dense(1, activation=sigmoid))
 
     # Compile
-    ann.compile(losses.mse)
+    net.compile(losses.mse)
 
     # Train neural network
-
     epochs = 200
-    history = np.zeros((epochs, len(input_array)))
+    history = np.zeros((epochs, train_samples))
     for e in range(epochs):
-        ann.fit(input_array, output_array, epochs=1, learning_rate=0.03)
-
-        history_data = np.zeros(len(input_array))
-        for n, (x, y) in enumerate(input_array):
-            predicted_output = ann.predict(np.array([x, y]))
-            history_data[n] = predicted_output
-        history[e] = history_data
+        net.fit(input_array, output_array, batch_size=4, epochs=1, learning_rate=0.08)
+        history[e] = net.predict(input_array).reshape(-1,)
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
     # # # # # # # # # # # # # # # # # # # # # # #   V A L I D A T I O N   # # # # # # # # # # # # # # # # # # # # #
     # Loss function
-    loss = ann.summary['train_loss']
+    loss = net.summary['train_loss']
 
     plt.plot(range(epochs), loss, c='0.3')
     plt.title('training loss function')
@@ -100,12 +95,12 @@ def main():
     plt.show()
 
     test_array = np.random.uniform(low=0, high=4, size=(2000, 2))
-    for (x, y) in test_array:
-        predicted_output = ann.predict(np.array([x, y]))
-        if predicted_output >= 0.5:
-            plt.scatter(x, y, s=3, c='y', alpha=abs(2 * predicted_output - 1))
+    prediction = net.predict(test_array)
+    for v, (x, y) in zip(prediction, test_array):
+        if v >= 0.5:
+            plt.scatter(x, y, s=3, c='y', alpha=abs(2 * v - 1))
         else:
-            plt.scatter(x, y, s=3, c='b', alpha=abs(2 * predicted_output - 1))
+            plt.scatter(x, y, s=3, c='b', alpha=abs(2 * v - 1))
 
     ax = plt.gca()
     ax.set_aspect('equal', adjustable='box')
@@ -176,7 +171,7 @@ def main():
 
     # Save animation
     writergif = animation.PillowWriter(fps=len(history) / interval * 10)
-    anim.save("anim.gif", writer=writergif, dpi=120)
+    anim.save("anim2.gif", writer=writergif, dpi=120)
 
 
 if __name__ == '__main__':

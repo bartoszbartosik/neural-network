@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 import neuralnetwork.losses
-from neuralnetwork import ANN
+from neuralnetwork import Network
 from neuralnetwork import losses
 from neuralnetwork.layers import InputLayer, Dense
 from neuralnetwork.activations import sigmoid, linear
@@ -32,7 +32,7 @@ class TestFeedforward(unittest.TestCase):
         # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
         # Build model
-        self.net = ANN()
+        self.net = Network()
         self.net.add_layer(InputLayer(input_shape=input_shape))
         self.net.add_layer(Dense(3, activation=sigmoid))
         self.net.add_layer(Dense(3, activation=sigmoid))

@@ -25,7 +25,7 @@ class Layer(ABC):
 
 
     def feedforward(self, a_):
-        self.z = np.dot(self.w, a_) + self.b
+        self.z = (np.dot(self.w, a_.transpose()) + self.b).transpose()
         self.a = self.activation(self.z)
 
 
