@@ -2,7 +2,7 @@
 # Neural Network
 The project contains neural network API allowing to build custom architecture deep learning models. The source code is written from scratch using _numpy_ which allows to investigate the model thoroughly during the learning process.
 
-Neural network learns by a backpropagation algorithm - it is used to determine the cost function gradient with respect to the network's both weights and biases. The gradient is then utilized by the _Stochastic Gradient Descnet_ algorithm, which updates network parameters with new values. The program leverages the below equations __[1]__:
+Neural network learns by a backpropagation algorithm - it is used to determine the cost function gradient with respect to the network's both weights and biases. The gradient is then utilized by the _Stochastic Gradient Descent_ algorithm, which updates the network parameters with new values. The program leverages the below equations __[1]__:
 ```math
 \delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L})
 ```
