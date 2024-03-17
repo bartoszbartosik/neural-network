@@ -17,7 +17,7 @@ class Layer(ABC):
         self.a: np.ndarray = np.zeros(neurons)
 
 
-    def init_params(self, a_):
+    def compile(self, a_):
         if self.w is None:
             self.w = np.random.rand(self.n, len(a_)) * 2 - 1
         if self.b is None:

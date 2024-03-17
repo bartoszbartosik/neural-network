@@ -55,7 +55,7 @@ class Network:
 
     def __build_layers(self):
         for i in range(1, len(self.layers[1:])+1):
-            self.layers[i].init_params(self.layers[i-1].a)
+            self.layers[i].compile(self.layers[i - 1].a)
 
 
     def compile(self, loss: Callable):
