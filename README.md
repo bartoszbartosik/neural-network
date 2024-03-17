@@ -2,7 +2,7 @@
 # Neural Network
 The project contains neural network API allowing to build custom architecture deep learning models. The source code is written from scratch using _numpy_ which allows to investigate the model thoroughly during the learning process.
 
-Neural network learns by a backpropagation algorithm - it is used to determine the cost function gradient with respect to the network's both weights and biases. The gradient is then utilized by the _Stochastic Gradient Descnet_ algorithm, which updates network parameters with new values. The program leverages the below equations __[1]__:
+Neural network learns by a backpropagation algorithm - it is used to determine the cost function gradient with respect to the network's both weights and biases. The gradient is then utilized by the _Stochastic Gradient Descent_ algorithm, which updates the network parameters with new values. The program leverages the below equations __[1]__:
 ```math
 \delta^{L} = \nabla_{a}C \odot \sigma ' (z^{L})
 ```
@@ -24,8 +24,8 @@ where:
 - $z^{l}$: input values of the l-th layer,
 - $a^{L}$: output vector of output layer,
 - $a^{l}$: output vector of l-th layer,
-- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases,
-- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights.
+- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the network's biases,
+- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the network's weights.
 
 ## Demo
 Let's take into consideration a Cartesian plane, where the coordinates are from a $\langle 0; 4 \rangle$ range. The points in this coordinate system can be classified on two groups - either yellow, or blue. Their color depends on the values of their coordinates - if they place the point inside one of the 4 circles, their colour is yellow and blue otherwise. The graph below visualizes training data with 1000 randomly generated points and their classification:
