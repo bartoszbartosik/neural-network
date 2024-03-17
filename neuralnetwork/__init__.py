@@ -1,1 +1,1 @@
-from .ann import ANN
+from .net import Network

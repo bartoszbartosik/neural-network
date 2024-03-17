@@ -2,7 +2,7 @@ import numpy as np
 
 from PIL import Image
 
-from neuralnetwork.ann import ANN
+from neuralnetwork.net import Network
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -59,7 +59,7 @@ test_own = (
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
-ann = ANN()
+ann = Network()
 
 # Input layer
 ann.add_layer(784, activation_function='')
