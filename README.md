@@ -24,8 +24,8 @@ where:
 - $z^{l}$: input values of the l-th layer,
 - $a^{L}$: output vector of output layer,
 - $a^{l}$: output vector of l-th layer,
-- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the netowork's biases,
-- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the netowork's weights.
+- $\frac{\partial C}{\partial b^{l}}$: cost function gradient with respect to the network's biases,
+- $\frac{\partial C}{\partial w^{l}}$: cost function gradient with respect to the network's weights.
 
 ## Demo
 Let's take into consideration a Cartesian plane, where the coordinates are from a $\langle 0; 4 \rangle$ range. The points in this coordinate system can be classified on two groups - either yellow, or blue. Their color depends on the values of their coordinates - if they place the point inside one of the 4 circles, their colour is yellow and blue otherwise. The graph below visualizes training data with 1000 randomly generated points and their classification:
