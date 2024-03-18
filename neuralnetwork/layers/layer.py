@@ -1,4 +1,6 @@
-from abc import ABC
+from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import Callable
 
 import numpy as np
@@ -6,27 +8,37 @@ import numpy as np
 
 class Layer(ABC):
 
-    def __init__(self, neurons: int, activation: Callable, weights: np.ndarray = None, bias: float = None):
-        self.n = neurons
-
+    def __init__(self, activation: Callable, weights: np.ndarray = None, bias: np.ndarray = None):
+        # Initialize weights if given
         self.w: np.ndarray = weights
-        self.b: float = bias
+        self.b: np.ndarray = bias
 
+        # Initialize neurons
         self.activation = activation
-        self.z: np.ndarray = np.zeros(neurons)
-        self.a: np.ndarray = np.zeros(neurons)
+        self.z: np.ndarray = np.zeros([])
+        self.a: np.ndarray = np.zeros([])
+
+        # Initialize loss function
+        self.loss: Callable = lambda: None
 
 
-    def compile(self, a_):
-        if self.w is None:
-            self.w = np.random.rand(self.n, len(a_)) * 2 - 1
-        if self.b is None:
-            self.b = np.random.random() * 2 - 1
+    @abstractmethod
+    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+        pass
 
 
-    def feedforward(self, a_):
-        self.z = (np.dot(self.w, a_.transpose()) + self.b).transpose()
-        self.a = self.activation(self.z)
+    @abstractmethod
+    def feedforward(self, a_: np.ndarray) -> None:
+        pass
+
+
+    @abstractmethod
+    def backpropagate(self,
+                      l_prev: Layer,
+                      delta_prev: np.ndarray = None,
+                      l_next: Layer = None,
+                      y: np.ndarray = None) -> tuple:
+        pass
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

@@ -7,6 +7,7 @@ from neuralnetwork.layers import Layer
 
 
 class Convolutional(Layer):
+
     def __init__(self, kernels: int, kernel_size: tuple, activation: Callable, padding='valid'):
         super().__init__(neurons=10,
                          activation=activation,
@@ -24,7 +25,9 @@ class Convolutional(Layer):
         self.shape = ()
 
 
-    def compile(self, a_):
+    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+        self.loss = loss
+
         # Unpack input axes
         batch_size, rows, cols, channels = a_.shape
 
@@ -55,3 +58,10 @@ class Convolutional(Layer):
 
         self.a = self.activation(self.z)
 
+
+    def backpropagate(self,
+                      l_prev: Layer,
+                      delta_prev: np.ndarray = None,
+                      l_next: Layer = None,
+                      y: np.ndarray = None) -> tuple:
+        pass

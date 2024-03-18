@@ -36,6 +36,7 @@ class Network:
         # Prepare data divided on mini batches
         mini_batches = [[x[i:i+batch_size], y[i:i+batch_size]] for i in range(0, len(x), batch_size)]
         for i in range(epochs):
+            loss = 0
             # Apply SGD for averaged data from mini batch
             for xs, ys in mini_batches:
                 # Train
@@ -45,26 +46,23 @@ class Network:
                 loss = self.loss(a, ys)
 
             # Update summary
-            self.summary['train_loss'].append(np.mean(loss))
+            loss_mean = np.mean(loss)
+            self.summary['train_loss'].append(loss_mean)
 
             # Progress bar
             sys.stdout.write('\r')
-            sys.stdout.write("Training in progress: [%-20s] %d%%" % ('=' * int(i/epochs*20), int(i/epochs*100)))
+            sys.stdout.write("Training in progress: [%-20s] %d%% | loss %.3f" % ('=' * int(i/epochs*20), int(i/epochs*100), loss_mean))
             sys.stdout.flush()
-
-
-    def __build_layers(self):
-        for i in range(1, len(self.layers[1:])+1):
-            self.layers[i].compile(self.layers[i - 1].a)
 
 
     def compile(self, loss: Callable):
         self.loss = loss
-        self.__build_layers()
+        for i in range(1, len(self.layers[1:])+1):
+            self.layers[i].compile(self.layers[i - 1].a, loss)
 
 
     def feedforward(self, x):
-        self.layers[0].a = x
+        self.layers[0].feedforward(x)
         for i in range(1, len(self.layers[1:])+1):
             self.layers[i].feedforward(self.layers[i-1].a)
 
@@ -81,22 +79,13 @@ class Network:
         """
         Calculate the Cost Function derivative over each weight and bias in order to determine its gradient.
         """
-        # Initialize Loss Function gradient with respect to the weights matrix
+        # Initialize Loss Function gradients
         grad_w = [np.zeros_like(layer.w) for layer in self.layers[1:]]
-
-        # Initialize Loss Function gradient with respect to the biases matrix
         grad_b = [np.zeros_like(layer.b) for layer in self.layers[1:]]
 
-        # Output Layer
-        delta = losses.d(self.loss, self.layers[-1].a, y) * activations.d(self.layers[-1].activation, self.layers[-1].z)
-        grad_b[-1] = delta
-        grad_w[-1] = [np.outer(d, a) for d, a in zip(delta, self.layers[-1].a)]
-
-        # Hidden Layers
+        grad_b[-1], grad_w[-1] = self.layers[-1].backpropagate(self.layers[-2], y=y)
         for l in range(-2, -len(self.layers), -1):
-            delta = np.dot(delta, self.layers[l+1].w) * activations.d(self.layers[l].activation, self.layers[l].z)
-            grad_b[l] = delta
-            grad_w[l] = [np.outer(d, a) for d, a in zip(delta, self.layers[l-1].a)]
+            grad_b[l], grad_w[l] = self.layers[l].backpropagate(self.layers[l-1], delta_prev=grad_b[l + 1], l_next=self.layers[l+1])
 
         return grad_w, grad_b
 
