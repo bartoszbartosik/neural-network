@@ -64,9 +64,9 @@ def main():
     net.add_layer(layers.InputLayer((2,)))
 
     # Hidden layers
-    net.add_layer(layers.Dense(100, activation=sigmoid))
-    net.add_layer(layers.Dense(100, activation=sigmoid))
-    net.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(50, activation=sigmoid))
+    net.add_layer(layers.Dense(50, activation=sigmoid))
+    net.add_layer(layers.Dense(50, activation=sigmoid))
 
     # Output layer
     net.add_layer(layers.Dense(1, activation=sigmoid))
@@ -75,10 +75,10 @@ def main():
     net.compile(losses.mse)
 
     # Train neural network
-    epochs = 200
+    epochs = 150
     history = np.zeros((epochs, train_samples))
     for e in range(epochs):
-        net.fit(input_array, output_array, batch_size=4, epochs=1, learning_rate=0.08)
+        net.fit(input_array, output_array, batch_size=1, epochs=1, learning_rate=0.1)
         history[e] = net.predict(input_array).reshape(-1,)
 
 
@@ -150,7 +150,6 @@ def main():
 
     # Animation function
     def update(epoch):
-
         for n, data in enumerate(colours[epoch]):
             ax_points[n].set_alpha(data[0])
             ax_points[n].set_color(data[1])
@@ -170,7 +169,7 @@ def main():
 
     # Save animation
     writergif = animation.PillowWriter(fps=len(history) / interval * 10)
-    anim.save("anim2.gif", writer=writergif, dpi=120)
+    anim.save("anim3.gif", writer=writergif, dpi=120)
 
 
 if __name__ == '__main__':
