@@ -83,9 +83,13 @@ class Network:
         grad_w = [np.zeros_like(layer.w) for layer in self.layers[1:]]
         grad_b = [np.zeros_like(layer.b) for layer in self.layers[1:]]
 
-        grad_b[-1], grad_w[-1] = self.layers[-1].backpropagate(self.layers[-2], y=y)
+        # Output layer
+        grad = losses.d(self.loss, self.layers[-1].a, y)
+        grad_b[-1], grad_w[-1] = self.layers[-1].backpropagate(grad=grad, lin=self.layers[-2])
+
+        # Hidden layers
         for l in range(-2, -len(self.layers), -1):
-            grad_b[l], grad_w[l] = self.layers[l].backpropagate(self.layers[l-1], delta_prev=grad_b[l + 1], l_next=self.layers[l+1])
+            grad_b[l], grad_w[l] = self.layers[l].backpropagate(grad=grad_b[l+1], lin=self.layers[l-1], lout=self.layers[l+1])
 
         return grad_w, grad_b
 

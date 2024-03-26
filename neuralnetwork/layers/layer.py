@@ -13,10 +13,13 @@ class Layer(ABC):
         self.w: np.ndarray = weights
         self.b: np.ndarray = bias
 
-        # Initialize neurons
+        # Initialize values
         self.activation = activation
         self.z: np.ndarray = np.zeros([])
         self.a: np.ndarray = np.zeros([])
+
+        # Initialize shape
+        self.shape = ()
 
         # Initialize loss function
         self.loss: Callable = lambda: None
@@ -34,10 +37,9 @@ class Layer(ABC):
 
     @abstractmethod
     def backpropagate(self,
-                      l_prev: Layer,
-                      delta_prev: np.ndarray = None,
-                      l_next: Layer = None,
-                      y: np.ndarray = None) -> tuple:
+                      grad: np.ndarray,
+                      lin: Layer,
+                      lout: Layer = None) -> tuple:
         pass
 
 

@@ -13,15 +13,17 @@ class Dense(Layer):
         super().__init__(activation=activation,
                          weights=weights,
                          bias=bias)
-        self.n = neurons
-        self.z: np.ndarray = np.zeros(self.n)
-        self.a: np.ndarray = np.zeros(self.n)
+
+        self.shape = (1, neurons)
+        self.z: np.ndarray = np.zeros(neurons)
+        self.a: np.ndarray = np.zeros(neurons)
 
 
     def compile(self, a_: np.ndarray, loss: Callable) -> None:
         self.loss = loss
+        _, neurons = self.shape
         if self.w is None:
-            self.w = np.random.rand(self.n, len(a_)) * 2 - 1
+            self.w = np.random.rand(neurons, len(a_)) * 2 - 1
         if self.b is None:
             self.b = np.random.random() * 2 - 1
 
@@ -32,21 +34,16 @@ class Dense(Layer):
 
 
     def backpropagate(self,
-                      l_prev: Layer,
-                      delta_prev: np.ndarray = None,
-                      l_next: Layer = None,
-                      y: np.ndarray = None) -> tuple:
+                      grad: np.ndarray,
+                      lin: Layer,
+                      lout: Layer = None) -> tuple:
         """
         Calculate the Cost Function derivative over each weight and bias in order to determine its gradient.
         """
-        # Output layer
-        if y is not None:
-            grad_b = losses.d(self.loss, self.a, y) * activations.d(self.activation, self.z)
-        # Hidden layer
-        else:
-            grad_b = np.dot(delta_prev, l_next.w) * activations.d(self.activation, self.z)
-
-        grad_w = [np.outer(d, a) for d, a in zip(grad_b, l_prev.a)]
+        # If the layer is hidden, use weights from the output to scale the gradient
+        grad_b = grad if lout is None else np.dot(grad, lout.w)
+        grad_b *= activations.d(self.activation, self.z)
+        grad_w = [np.outer(g, a) for g, a in zip(grad_b, lin.a)]
 
         return grad_b, grad_w
 

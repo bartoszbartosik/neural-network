@@ -64,9 +64,9 @@ def main():
     net.add_layer(layers.InputLayer((2,)))
 
     # Hidden layers
-    net.add_layer(layers.Dense(50, activation=sigmoid))
-    net.add_layer(layers.Dense(50, activation=sigmoid))
-    net.add_layer(layers.Dense(50, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
+    net.add_layer(layers.Dense(100, activation=sigmoid))
 
     # Output layer
     net.add_layer(layers.Dense(1, activation=sigmoid))
@@ -75,10 +75,10 @@ def main():
     net.compile(losses.mse)
 
     # Train neural network
-    epochs = 150
+    epochs = 200
     history = np.zeros((epochs, train_samples))
     for e in range(epochs):
-        net.fit(input_array, output_array, batch_size=1, epochs=1, learning_rate=0.1)
+        net.fit(input_array, output_array, batch_size=4, epochs=1, learning_rate=0.08)
         history[e] = net.predict(input_array).reshape(-1,)
 
 

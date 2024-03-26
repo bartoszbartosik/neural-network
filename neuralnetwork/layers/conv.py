@@ -9,8 +9,7 @@ from neuralnetwork.layers import Layer
 class Convolutional(Layer):
 
     def __init__(self, kernels: int, kernel_size: tuple, activation: Callable, padding='valid'):
-        super().__init__(neurons=10,
-                         activation=activation,
+        super().__init__(activation=activation,
                          weights=None,
                          bias=None)
 
@@ -60,8 +59,23 @@ class Convolutional(Layer):
 
 
     def backpropagate(self,
-                      l_prev: Layer,
-                      delta_prev: np.ndarray = None,
-                      l_next: Layer = None,
-                      y: np.ndarray = None) -> tuple:
-        pass
+                      grad: np.ndarray,
+                      lin: Layer,
+                      lout: Layer = None) -> tuple:
+
+        batch_size, out_rows, out_cols, out_channels = lin.shape
+
+        grad_b = np.zeros(self.shape)
+        grad_w = np.zeros(self.kernels.shape)
+
+        if lout is None:
+            for b in range(batch_size):
+                for k in range(self.knum):
+                    for c in range(out_channels):
+                        grad_w[b, :, :, k] += signal.correlate2d(lin[b, :, :, c], self.kernels[k, c, :, :], "valid")
+                        grad_b[b, :, :, k] += signal.convolve2d()
+
+        return grad_b, grad_w
+
+
+
