@@ -1,9 +1,40 @@
 from typing import Callable
 
 import numpy as np
-from scipy import signal
 
 from neuralnetwork.layers import Layer
+
+
+def convolve(a: np.ndarray, kernel: np.ndarray, padding) -> np.ndarray:
+    kernel = np.rot90(kernel, 2)
+    return crosscorrelate(a, kernel, padding)
+
+
+def crosscorrelate(a: np.ndarray, kernel: np.ndarray, padding: str) -> np.ndarray:
+    # Unpack kernel shape
+    krows, kcols = kernel.shape
+
+    # Add padding if applicable
+    if padding == 'same' or padding == 'full':
+        pad_row = (krows//2, krows//2 - (krows % 2 == 0))
+        pad_col = (kcols//2, kcols//2 - (kcols % 2 == 0))
+        a = np.pad(a, pad_width=(pad_row, pad_col))
+
+    # Get matrix shape
+    rows, cols = a.shape
+
+    # Compute output shape
+    out_rows, out_cols = (rows - krows + 1, cols - kcols + 1)
+
+    # Initialize result array
+    conv = np.zeros((out_rows, out_cols))
+
+    # Convolve
+    for row in range(out_rows):
+        for col in range(out_cols):
+            conv[row, col] = np.sum(a[row : row + krows, col : col + kcols] * kernel)
+
+    return conv
 
 
 class Convolutional(Layer):
@@ -53,7 +84,7 @@ class Convolutional(Layer):
         for b in range(batch_size):
             for k in range(self.knum):
                 for c in range(channels):
-                    self.z[b, :, :, k] += signal.correlate2d(a_[b, :, :, c], self.kernels[k, c, :, :], mode=self.padding) + self.biases[:, :, k]
+                    self.z[b, :, :, k] += crosscorrelate(a_[b, :, :, c], self.kernels[k, c, :, :], padding=self.padding) + self.biases[:, :, k]
 
         self.a = self.activation(self.z)
 
@@ -68,12 +99,12 @@ class Convolutional(Layer):
         grad_b = np.zeros(self.shape)
         grad_w = np.zeros(self.kernels.shape)
 
-        if lout is None:
+        if lout is not None:
             for b in range(batch_size):
                 for k in range(self.knum):
                     for c in range(out_channels):
-                        grad_w[b, :, :, k] += signal.correlate2d(lin[b, :, :, c], self.kernels[k, c, :, :], "valid")
-                        grad_b[b, :, :, k] += signal.convolve2d()
+                        grad_b[b, :, :, k] += convolve(grad[k, c, :, :], self.kernels[k, c, :, :], 'same')
+                        grad_w[b, :, :, k] += crosscorrelate(lin.a[b, :, :, c], grad[k, c, :, :], 'valid')
 
         return grad_b, grad_w
 
