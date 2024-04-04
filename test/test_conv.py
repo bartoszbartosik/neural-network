@@ -12,27 +12,31 @@ import keras
 
 class TestConv(unittest.TestCase):
 
-    def setUp(self):
+    def test_prediction_simple(self):
         # Define input shape
-        input_shape = (1, 5, 5, 1)  # (batch_size, rows, cols, channels)
+        batch_size = 1
+        input_shape = (5, 5, 1)  # (rows, cols, channels)
 
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        # Kernel
+        kernel_size = (3, 3)
+        kernel = np.array([
+            [1, 0, 1],
+            [0, 1, 0],
+            [1, 0, 1],
+        ])
+        bias = np.zeros((1,))
 
         # Build model
-        self.net = Network()
-        self.net.add_layer(InputLayer(input_shape=input_shape))
-        self.net.add_layer(Convolutional(1, (3, 3), activation=relu, padding='same'))
-        self.net.compile(neuralnetwork.losses.mse)
-
-        # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        net = Network()
+        net.add_layer(InputLayer(input_shape=(batch_size, *input_shape)))
+        net.add_layer(Convolutional(1, kernel_size, activation=relu, padding='valid'))
+        net.compile(neuralnetwork.losses.mse)
 
         # Build reference model
-        self.kerasnet = keras.models.Sequential()
-        self.kerasnet.add(keras.layers.Conv2D(2, (2, 2), input_shape=(5, 5, 2), activation='relu', padding='valid'))
-        self.kerasnet.compile()
+        kerasnet = keras.models.Sequential()
+        kerasnet.add(keras.layers.Conv2D(1, kernel_size, input_shape=input_shape, activation='relu', padding='valid'))
+        kerasnet.compile()
 
-
-    def test_prediction(self):
         x = np.array([
             [1, 2, 1, 0, 2],
             [2, 0, 0, 1, 0],
@@ -41,40 +45,67 @@ class TestConv(unittest.TestCase):
             [0, 2, 1, 0, 2],
         ])
 
-        self.net.layers[-1].kernels = np.array([[[
-            [1, 0, 1],
-            [0, 1, 0],
-            [1, 0, 1],
-        ]]])
-        self.net.layers[-1].biases = np.zeros_like(self.net.layers[-1].biases)
+        net.layers[-1].kernels = kernel.reshape(net.layers[-1].kernels.shape)
+        net.layers[-1].biases = np.zeros_like(net.layers[-1].biases)
 
-        a_net = self.net.predict(x.reshape(1, 5, 5, 1))
-        print(a_net)
+        kerasnet.layers[-1].set_weights([kernel.reshape(3, 3, 1, 1), bias])
 
-    def test_prediction_2(self):
+        a_net = net.predict(x.reshape(batch_size, *input_shape))
+        a_kerasnet = kerasnet.predict(x.reshape(batch_size, *input_shape))
+        print(a_net[0, :, :, 0])
+        print(a_kerasnet[0, :, :, 0])
+
+        np.testing.assert_allclose(a_net, a_kerasnet)
+
+    def test_prediction_batch_size(self):
+        # Define input shape
+        batch_size = 2
+        input_shape = (5, 6, 1)  # (rows, cols, channels)
+
+        # Kernels
+        kernels = 2
+        kernel_size = (3, 3)
+
+        # Build model
+        net = Network()
+        net.add_layer(InputLayer(input_shape=(batch_size, *input_shape)))
+        net.add_layer(Convolutional(kernels, kernel_size, activation=relu, padding='valid'))
+        net.compile(losses.mse)
+
+        # Build reference model
+        kerasnet = keras.models.Sequential()
+        kerasnet.add(keras.layers.Conv2D(kernels, kernel_size, input_shape=input_shape, activation='relu', padding='valid'))
+        kerasnet.compile()
+
+        # Define sample input consisting of 2 samples/channels
         x = np.array([
-            [[1, 2, 1, 0, 2],
-             [2, 0, 0, 1, 0],
-             [1, 0, 2, 1, 0],
-             [0, 1, 0, 2, 1],
-             [0, 2, 1, 0, 2]],
-            [[1, 2, 1, 0, 2],
-             [2, 0, 0, 1, 0],
-             [1, 0, 2, 1, 0],
-             [0, 1, 0, 2, 1],
-             [0, 2, 1, 0, 2]],
+            [[1, 2, 1, 0, 2, 2],
+             [2, 0, 0, 1, 0, 1],
+             [1, 0, 2, 1, 0, 0],
+             [0, 1, 0, 2, 1, 0],
+             [0, 2, 1, 0, 2, 1]],
+            [[1, 2, 1, 0, 2, 2],
+             [2, 0, 0, 1, 0, 1],
+             [1, 0, 2, 1, 0, 0],
+             [0, 1, 0, 2, 1, 0],
+             [0, 2, 1, 0, 2, 1]],
         ])
 
-        self.net.layers[0] = InputLayer(input_shape=(1, 5, 5, 2))
-        self.net.layers[1] = Convolutional(2, (2, 2), activation=relu, padding='valid')
-        self.net.compile(losses.mse)
+        # Get reference model weights and assign to the tested one
+        keras_weights = kerasnet.layers[0].get_weights()[0]
+        _, _, channel, batch = keras_weights.shape
+        for b in range(batch):
+            for c in range(channel):
+                net.layers[1].kernels[b, c, :, :] = keras_weights[:, :, c, b]
+        net.layers[1].biases = np.zeros_like(net.layers[1].biases)
 
-        self.net.layers[1].kernels = np.array(self.kerasnet.layers[0].get_weights()[0].transpose())
-        self.net.layers[1].biases = np.zeros_like(self.net.layers[1].biases)
+        # Predict actual and expected output, respectively
+        a = net.predict(x.reshape(batch_size, *input_shape))
+        b = kerasnet.predict(x.reshape(batch_size, *input_shape))
+        print(a[:, :, :, 0])
+        print(b[:, :, :, 0])
 
-        a = self.net.predict(x.reshape(1, 5, 5, 2))
-        b = self.kerasnet.predict(x.reshape(1, 5, 5, 2))
-        print(a)
-        print(a.shape)
+        np.testing.assert_allclose(a, b, rtol=1e-5)
+
 
 

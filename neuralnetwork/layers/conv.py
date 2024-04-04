@@ -29,7 +29,7 @@ def crosscorrelate(a: np.ndarray, kernel: np.ndarray, padding: str) -> np.ndarra
     # Initialize result array
     conv = np.zeros((out_rows, out_cols))
 
-    # Convolve
+    # Cross-correlate
     for row in range(out_rows):
         for col in range(out_cols):
             conv[row, col] = np.sum(a[row : row + krows, col : col + kcols] * kernel)
