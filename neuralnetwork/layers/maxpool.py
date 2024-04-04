@@ -19,13 +19,13 @@ class MaxPooling(Layer):
         p_rows, p_cols = self.pool_size
         out_rows = (rows - p_rows) // self.stride + 1
         out_cols = (cols - p_cols) // self.stride + 1
-        self.shape = batch_size, out_rows, out_cols, channels
+        self.shape = (batch_size, out_rows, out_cols, channels)
+        self.a = np.zeros(self.shape)
 
 
     def feedforward(self, a_: np.ndarray) -> None:
         batch_size, out_rows, out_cols, channels = self.shape
         p_rows, p_cols = self.pool_size
-        self.a = np.zeros(self.shape)
 
         for b in range(batch_size):
             for c in range(channels):

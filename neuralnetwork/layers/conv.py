@@ -76,6 +76,9 @@ class Convolutional(Layer):
         # Initialize biases
         self.biases = np.random.rand(*self.shape[1:])
 
+        # Initialize activations
+        self.a = np.zeros(self.shape)
+
 
     def feedforward(self, a_):
         batch_size, _, _, channels = a_.shape
