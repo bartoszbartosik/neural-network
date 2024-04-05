@@ -2,7 +2,7 @@ from typing import Callable
 
 import numpy as np
 
-from neuralnetwork.layers import Layer
+from neuralnetwork.layers import Layer, Dense
 from neuralnetwork.activations import linear
 
 
@@ -15,11 +15,11 @@ class Flatten(Layer):
     def build(self, a_: np.ndarray, loss: Callable) -> None:
         batch_size, rows, cols, channels = a_.shape
         self.shape = (batch_size, rows*cols*channels)
+        self.a = np.zeros(self.shape)
 
 
     def feedforward(self, a_: np.ndarray) -> None:
         batch_size, out_rows, out_cols, channels = a_.shape
-        self.a = np.zeros(self.shape)
 
         for b in range(batch_size):
             n = 0
@@ -31,5 +31,5 @@ class Flatten(Layer):
 
 
     def backpropagate(self, grad: np.ndarray, lin: Layer, lout: Layer = None) -> tuple:
-        pass
+        return grad.reshape(lin.shape)
 
