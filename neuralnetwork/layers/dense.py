@@ -19,7 +19,7 @@ class Dense(Layer):
         self.a: np.ndarray = np.zeros(neurons)
 
 
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         self.loss = loss
         _, neurons = self.shape
         if self.w is None:

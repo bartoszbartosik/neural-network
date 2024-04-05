@@ -14,7 +14,7 @@ class MaxPooling(Layer):
         self.stride = stride
 
 
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         batch_size, rows, cols, channels = a_.shape
         p_rows, p_cols = self.pool_size
         out_rows = (rows - p_rows) // self.stride + 1

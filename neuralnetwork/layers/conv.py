@@ -55,7 +55,7 @@ class Convolutional(Layer):
         self.shape = ()
 
 
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         self.loss = loss
 
         # Unpack input axes

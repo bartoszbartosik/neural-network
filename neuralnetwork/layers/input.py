@@ -14,7 +14,7 @@ class InputLayer(Layer):
         self.a = np.zeros(input_shape)
 
 
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         self.a = a_
 
     def feedforward(self, a_):

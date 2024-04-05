@@ -26,7 +26,7 @@ class Layer(ABC):
 
 
     @abstractmethod
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         pass
 
 

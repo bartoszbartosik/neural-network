@@ -12,7 +12,7 @@ class Flatten(Layer):
         super().__init__(activation=linear)
 
 
-    def compile(self, a_: np.ndarray, loss: Callable) -> None:
+    def build(self, a_: np.ndarray, loss: Callable) -> None:
         batch_size, rows, cols, channels = a_.shape
         self.shape = (batch_size, rows*cols*channels)
 

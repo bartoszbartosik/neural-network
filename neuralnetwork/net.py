@@ -58,7 +58,7 @@ class Network:
     def compile(self, loss: Callable):
         self.loss = loss
         for i in range(1, len(self.layers[1:])+1):
-            self.layers[i].compile(self.layers[i - 1].a, loss)
+            self.layers[i].build(self.layers[i - 1].a, loss)
 
 
     def feedforward(self, x):
