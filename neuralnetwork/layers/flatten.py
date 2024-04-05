@@ -4,32 +4,27 @@ import numpy as np
 
 from neuralnetwork.layers import Layer, Dense
 from neuralnetwork.activations import linear
+from neuralnetwork import activations
 
 
 class Flatten(Layer):
 
     def __init__(self):
         super().__init__(activation=linear)
+        self.input_shape = ()
 
 
     def build(self, a_: np.ndarray, loss: Callable) -> None:
-        batch_size, rows, cols, channels = a_.shape
+        batch_size, rows, cols, channels = self.input_shape = a_.shape
         self.shape = (batch_size, rows*cols*channels)
         self.a = np.zeros(self.shape)
 
 
     def feedforward(self, a_: np.ndarray) -> None:
-        batch_size, out_rows, out_cols, channels = a_.shape
-
-        for b in range(batch_size):
-            n = 0
-            for c in range(channels):
-                for row in range(out_rows):
-                    for col in range(out_cols):
-                        self.a[b, n] = a_[b, row, col, c]
-                        n += 1
+        batch_size, _, _, _ = a_.shape
+        self.a = np.reshape(a_, (batch_size, -1))
 
 
     def backpropagate(self, grad: np.ndarray, lin: Layer, lout: Layer = None) -> tuple:
-        return grad.reshape(lin.shape)
+        return grad.reshape(lin.shape), None
 
