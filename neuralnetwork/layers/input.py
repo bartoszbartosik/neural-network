@@ -20,5 +20,5 @@ class InputLayer(Layer):
     def feedforward(self, a_):
         self.a = a_
 
-    def backpropagate(self, y):
+    def backpropagate(self, grad: np.ndarray, a_: np.ndarray, w_out: np.ndarray = None) -> tuple:
         pass

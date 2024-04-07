@@ -25,6 +25,9 @@ class Flatten(Layer):
         self.a = np.reshape(a_, (batch_size, -1))
 
 
-    def backpropagate(self, grad: np.ndarray, lin: Layer, lout: Layer = None) -> tuple:
-        return grad.reshape(lin.shape), None
+    def backpropagate(self, grad: np.ndarray, a_: np.ndarray, w_out: np.ndarray = None) -> tuple:
+        # If the layer is hidden, use weights from the output to scale the gradient
+        grad = grad if w_out is None else np.dot(grad, w_out)
+
+        return grad, None
 

@@ -2,7 +2,21 @@ from typing import Callable
 
 import numpy as np
 
+from neuralnetwork import activations
 from neuralnetwork.layers import Layer
+
+
+def pad_like(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    if a.shape == b.shape:
+        return a
+
+    b_rows, b_cols = b.shape
+    a_rows, a_cols = a.shape
+
+    pad_row = ((b_cols - a_cols) // 2, (b_cols - a_cols) // 2 + ((b_cols - a_cols) % 2))
+    pad_col = ((b_rows - a_rows) // 2, (b_rows - a_rows) // 2 + ((b_rows - a_rows) % 2))
+
+    return np.pad(a, pad_width=(pad_row, pad_col))
 
 
 def convolve(a: np.ndarray, kernel: np.ndarray, padding) -> np.ndarray:
@@ -50,8 +64,8 @@ class Convolutional(Layer):
         self.padding = padding
 
         # Empty data
-        self.biases: np.ndarray = np.array([])
-        self.kernels: np.ndarray = np.array([])
+        self.b: np.ndarray = np.array([])
+        self.w: np.ndarray = np.array([])
         self.shape = ()
 
 
@@ -71,10 +85,10 @@ class Convolutional(Layer):
         self.shape = (batch_size, out_rows, out_cols, self.knum)
 
         # Initialize kernels
-        self.kernels = np.random.rand(self.knum, channels, self.krows, self.kcols) * 2 - 1
+        self.w = np.random.rand(self.knum, channels, self.krows, self.kcols) * 2 - 1
 
         # Initialize biases
-        self.biases = np.random.rand(*self.shape[1:])
+        self.b = np.random.rand(*self.shape[1:])
 
         # Initialize activations
         self.a = np.zeros(self.shape)
@@ -87,27 +101,26 @@ class Convolutional(Layer):
         for b in range(batch_size):
             for k in range(self.knum):
                 for c in range(channels):
-                    self.z[b, :, :, k] += crosscorrelate(a_[b, :, :, c], self.kernels[k, c, :, :], padding=self.padding) + self.biases[:, :, k]
+                    self.z[b, :, :, k] += crosscorrelate(a_[b, :, :, c], self.w[k, c, :, :], padding=self.padding) + self.b[:, :, k]
 
         self.a = self.activation(self.z)
 
 
-    def backpropagate(self,
-                      grad: np.ndarray,
-                      lin: Layer,
-                      lout: Layer = None) -> tuple:
+    def backpropagate(self, grad: np.ndarray, a_: Layer, w_out: Layer = None) -> tuple:
 
-        batch_size, out_rows, out_cols, out_channels = lin.shape
+        batch_size, out_rows, out_cols, out_channels = a_.shape
 
         grad_b = np.zeros(self.shape)
-        grad_w = np.zeros(self.kernels.shape)
+        grad_w = np.zeros_like(self.w)
 
-        if lout is not None:
-            for b in range(batch_size):
-                for k in range(self.knum):
-                    for c in range(out_channels):
-                        grad_b[b, :, :, k] += convolve(grad[k, c, :, :], self.kernels[k, c, :, :], 'same')
-                        grad_w[b, :, :, k] += crosscorrelate(lin.a[b, :, :, c], grad[k, c, :, :], 'valid')
+        for b in range(batch_size):
+            for k in range(self.knum):
+                for c in range(out_channels):
+                    grad_pad = pad_like(grad[b, :, :, c], grad_b[b, :, :, c])
+                    # grad_b[b, :, :, c] += convolve(grad_pad, self.w[k, c, :, :], 'same')
+                    grad_b[b, :, :, c] += grad_pad if w_out is None else convolve(grad_pad, w_out[b, c, :, :], 'same')
+                    grad_b[b, :, :, c] *= activations.d(self.activation, self.z[b, :, :, k])
+                    grad_w[b, k, :, :] += crosscorrelate(a_[b, :, :, c], grad[b, :, :, c], 'valid')
 
         return grad_b, grad_w
 

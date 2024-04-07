@@ -5,7 +5,7 @@ from typing import List, Callable
 import matplotlib.pyplot as plt
 import numpy as np
 
-from .layers import Layer
+from .layers import Layer, Flatten, MaxPooling, Dense
 from neuralnetwork import losses
 from neuralnetwork import activations
 
@@ -85,11 +85,15 @@ class Network:
 
         # Output layer
         grad = losses.d(self.loss, self.layers[-1].a, y)
-        grad_b[-1], grad_w[-1] = self.layers[-1].backpropagate(grad=grad, lin=self.layers[-2])
+        a_ = self.layers[-2].a
+        grad_b[-1], grad_w[-1] = self.layers[-1].backpropagate(grad, a_)
 
         # Hidden layers
         for l in range(-2, -len(self.layers), -1):
-            grad_b[l], grad_w[l] = self.layers[l].backpropagate(grad=grad_b[l+1], lin=self.layers[l-1], lout=self.layers[l+1])
+            grad = grad_b[l+1]
+            a_ = self.layers[l-1].a
+            w = self.layers[l+1].w
+            grad_b[l], grad_w[l] = self.layers[l].backpropagate(grad, a_, w)
 
         return grad_w, grad_b
 
@@ -103,8 +107,13 @@ class Network:
 
         # Compute new weights and biases using Stochastic Gradient Descent
         for l in range(len(self.layers[1:])):
-            self.layers[l+1].w -= eta * np.mean(grad_w[l], axis=0)
-            self.layers[l+1].b -= eta * np.mean(grad_b[l])
+            if not isinstance(self.layers[l+1], (Flatten, MaxPooling)):
+                self.layers[l+1].w -= eta * np.mean(grad_w[l], axis=0)
+                if isinstance(self.layers[l+1], Dense):
+                    self.layers[l+1].b -= eta * np.mean(grad_b[l])
+                else:
+                    self.layers[l+1].b -= eta * np.mean(grad_b[l], axis=0)
+
 
 
     # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

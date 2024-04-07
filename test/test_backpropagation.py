@@ -76,6 +76,7 @@ class TestFeedforward(unittest.TestCase):
         loss = keras.losses.MeanSquaredError()
         optimizer = keras.optimizers.SGD(learning_rate=eta)
         self.kerasnet.compile(loss=loss, optimizer=optimizer)
+
         self.kerasnet.fit(x, y, epochs=1)
         weights = self.kerasnet.get_weights()
         self.kerasnet.summary()

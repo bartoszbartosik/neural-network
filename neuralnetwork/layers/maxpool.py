@@ -12,15 +12,12 @@ class MaxPooling(Layer):
         super().__init__(activation=linear)
         self.pool_size = pool_size
         self.stride = stride
-        self.grad = np.zeros([])
         self.amax = np.zeros([])
+        self.indices = []
 
 
 
     def build(self, a_: np.ndarray, loss: Callable) -> None:
-        # Initialize gradient
-        self.grad = np.zeros_like(a_)
-
         # Compute activations shape after pooling
         batch_size, rows, cols, channels = a_.shape
         p_rows, p_cols = self.pool_size
@@ -37,6 +34,8 @@ class MaxPooling(Layer):
         batch_size, out_rows, out_cols, channels = self.shape
         p_rows, p_cols = self.pool_size
 
+        self.indices = []
+
         for b in range(batch_size):
             for c in range(channels):
                 for row in range(out_rows):
@@ -52,14 +51,23 @@ class MaxPooling(Layer):
                         r_max, c_max = np.unravel_index(np.argmax(window), window.shape)
                         r_max += row * self.stride
                         c_max += col * self.stride
-                        # Propagate gradient tensor
-                        self.grad[b, r_max, c_max, c] += window_max
+
+                        # Store indices
+                        self.indices.append((r_max, c_max))
 
 
-    def backpropagate(self, grad: np.ndarray, lin: Layer, lout: Layer = None) -> tuple:
+    def backpropagate(self, grad: np.ndarray, a_: Layer, w_out: Layer = None) -> tuple:
         """
         The gradients are the MaxUnpooled values of the MaxPooling layer activations.
         """
+        batch_size, rows, cols, channels = self.shape
 
-        return self.grad, None
+        grad_b = np.zeros_like(a_)
+
+        for b in range(batch_size):
+            for c in range(channels):
+                for i, index in enumerate(self.indices):
+                    grad_b[b, :, :, c][index] += grad[b][i]
+
+        return grad_b, None
 

@@ -36,10 +36,7 @@ class Layer(ABC):
 
 
     @abstractmethod
-    def backpropagate(self,
-                      grad: np.ndarray,
-                      lin: Layer,
-                      lout: Layer = None) -> tuple:
+    def backpropagate(self, grad: np.ndarray, a_: np.ndarray, w_out: np.ndarray = None) -> tuple:
         pass
 
 

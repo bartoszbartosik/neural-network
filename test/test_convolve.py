@@ -59,3 +59,29 @@ class TestConvolve(unittest.TestCase):
 
         np.testing.assert_equal(actual, expected)
 
+
+    def test_crosscorrelate_2d(self):
+        x = np.array([
+            [1, 2, 1, 0, 2],
+            [2, 0, 0, 1, 0],
+            [1, 0, 2, 1, 0],
+            [0, 1, 0, 2, 1],
+            [0, 2, 1, 0, 2],
+        ])
+
+        kernel = np.array([
+            [1, 0, 1],
+            [1, 1, 0],
+            [1, 0, 1],
+        ])
+
+        padding = 'same'
+
+        expected = correlate2d(x, kernel, mode=padding)
+        actual = crosscorrelate(x, kernel, padding=padding)
+
+        print(expected)
+        print(actual)
+
+        np.testing.assert_equal(actual, expected)
+
