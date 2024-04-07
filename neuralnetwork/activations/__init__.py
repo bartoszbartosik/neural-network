@@ -8,7 +8,7 @@ def d(f: Callable, x: np.ndarray):
     match f.__name__:
         case 'sigmoid': return f(x)*(1 - f(x))
         case 'relu': return 1 * (x > 0)
-        case 'linear': return 1
+        case 'linear': return np.ones_like(x)
 
 
 def sigmoid(x):
