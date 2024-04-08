@@ -3,6 +3,8 @@ import numpy as np
 from PIL import Image
 
 from neuralnetwork.net import Network
+from neuralnetwork.layers import InputLayer, Convolutional, MaxPooling, Flatten, Dense
+from neuralnetwork.activations import relu
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -11,89 +13,40 @@ from neuralnetwork.net import Network
 # # # # # # # # # # #
 # load  &&  process #
 # # # # # # # # # # #
-training_data_npz = np.load('training_data/mnist.npz')
+train_size = 1000
+mnist = np.load('../datasets/mnist.npz')
 
-input_data = [x.flatten()/255 for x in training_data_npz['x_test']]
-print(len(input_data))
-
-output_data = []
-for value in training_data_npz['y_test']:
-    out = np.zeros(10)
-    out[value] = 1
-    output_data.append(out)
+x_train = mnist['x_train'][:train_size].reshape(train_size, 28, 28, 1) / 255
+y_train_idx = mnist['y_train'][:train_size]
+y_train = np.zeros((y_train_idx.size, y_train_idx.max() + 1))
+y_train[np.arange(y_train_idx.size), y_train_idx] = 1
 
 training_data = (
-    input_data, output_data
+    x_train, y_train
 )
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # TEST DATA # # # # # # # # # # #
-# From MNIST
-test_input = [x.flatten()/255 for x in training_data_npz['x_train']]
-
-test_output = []
-for value in training_data_npz['y_train']:
-    out = np.zeros(10)
-    out[value] = 1
-    test_output.append(out)
-
-test_data = (
-    test_input, test_output
-)
-
-# Own data
-test_input_own = []
-for i in range(10):
-    img_file = Image.open('training_data/mnist_digits/{}_test.png'.format(i)).convert('L')
-    img_np = np.asarray(img_file)
-    img_np = np.array([arr.flatten()/255 for arr in img_np]).flatten()
-    test_input_own.append(img_np)
-
-test_output_own = np.identity(10)
-
-test_own = (
-    test_input_own, test_output_own
-)
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # #   N E U R A L   N E T W O R K   # # # # # # # # # # # # # # # # # # # # #
-ann = Network()
+# Parameters
+batch_size = 1
+epochs = 10
+learning_rate = 0.1
 
-# Input layer
-ann.add_layer(784, activation_function='')
+input_shape = (batch_size, 28, 28, 1)
 
-# Hidden layers
-ann.add_layer(300, activation_function='sigmoid')
-ann.add_layer(100, activation_function='sigmoid')
+cnn = Network()
 
-# Output layer
-ann.add_layer(10, activation_function='sigmoid')
+cnn.add_layer(InputLayer(input_shape=input_shape))
+cnn.add_layer(Convolutional(1, (2, 2), activation=relu, padding='same'))
+cnn.add_layer(Convolutional(1, (2, 2), activation=relu, padding='same'))
 
-
-ann.load_network('mnist-300-100')
-
-# Train neural network with given parameters
-ann.fit(training_data,
-        epochs=5,
-        learning_ratio=0.1,
-        plot_cost=True,
-        plot_accuracy=True,
-        discretize_accuracy=False)
-
-ann.save_network('mnist-300-100')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # # # #   V E R I F I C A T I O N   # # # # # # # # # # # # # # # # # # # # # #
-
-for i in range(10):
-    input_array = test_own[0][i]
-    print((np.round(ann.predict(input_array), 2)))
-    print('Neural network solution: ', np.argmax(ann.predict(input_array)))
-    print('Expected outcome: ', np.argmax(test_own[1][i]))
-
-print('Accuracy for own test data: {}'.format(ann.accuracy(test_own, discretize=False)))
-print('Accuracy for test data: {}'.format(ann.accuracy(test_data, discretize=False)))
 

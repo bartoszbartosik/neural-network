@@ -25,14 +25,14 @@ def main():
                          (x-3)**2 + (y-3)**2 <= 0.5
                     else 0 for (x, y) in input_array ]).reshape(train_samples, -1)
 
-    # np.savez('training_data/plane_test.npz', input_data=input_array, output_data=output_array)
+    # np.savez('datasets/plane_test.npz', input_data=input_array, output_data=output_array)
 
     # # # # # # #
     # load data #
     # # # # # # #
-    # training_data_npz = np.load('training_data/plane_test.npz')
+    # training_data_npz = np.load('datasets/plane_test.npz')
     #
-    # training_data = (
+    # datasets = (
     #     training_data_npz['input_data'], training_data_npz['output_data']
     # )
 
