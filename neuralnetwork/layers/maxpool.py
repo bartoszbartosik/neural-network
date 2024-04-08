@@ -13,7 +13,7 @@ class MaxPooling(Layer):
         self.pool_size = pool_size
         self.stride = stride
         self.amax = np.zeros([])
-        self.indices = []
+        self.indices = np.empty([], dtype=object)
 
 
 
@@ -34,8 +34,7 @@ class MaxPooling(Layer):
         batch_size, out_rows, out_cols, channels = self.shape
         p_rows, p_cols = self.pool_size
 
-        self.indices = []
-
+        self.indices = np.empty(self.shape, dtype=object)
         for b in range(batch_size):
             for c in range(channels):
                 for row in range(out_rows):
@@ -47,13 +46,14 @@ class MaxPooling(Layer):
                         # Update MaxPool activations
                         self.a[b, row, col, c] = window_max
 
-                        # Get the max value's index
+                        # Get the max value's 2D index
                         r_max, c_max = np.unravel_index(np.argmax(window), window.shape)
                         r_max += row * self.stride
                         c_max += col * self.stride
 
                         # Store indices
-                        self.indices.append((r_max, c_max))
+                        self.indices[b, row, col, c] = r_max, c_max
+                        # self.indices.append((r_max, c_max))
 
 
     def backpropagate(self, grad: np.ndarray, a_: Layer, w_out: Layer = None) -> tuple:
@@ -63,11 +63,13 @@ class MaxPooling(Layer):
         batch_size, rows, cols, channels = self.shape
 
         grad_b = np.zeros_like(a_)
+        grad = grad.reshape(self.shape)
 
         for b in range(batch_size):
             for c in range(channels):
-                for i, index in enumerate(self.indices):
-                    grad_b[b, :, :, c][index] += grad[b][i]
+                for row in range(len(self.indices[b, :, :, c])):
+                    for col in range(len(self.indices[b, row, :, c][0])):
+                        grad_b[b, :, :, c][self.indices[b, row, col, c]] = grad[b, row, col, c]
 
         return grad_b, None
 

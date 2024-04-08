@@ -136,10 +136,9 @@ class TestConv(unittest.TestCase):
         net = Network()
         net.add_layer(InputLayer(input_shape=(batch_size, *input_shape)))
         net.add_layer(Convolutional(1, kernel_size, activation=relu, padding='same'))
-        net.add_layer(Convolutional(1, kernel_size, activation=relu, padding='valid'))
-        net.add_layer(MaxPooling((2, 2), 1))
+        net.add_layer(Convolutional(1, kernel_size, activation=relu, padding='same'))
+        net.add_layer(MaxPooling((2, 2), 2))
         net.add_layer(Flatten())
-        net.add_layer(Dense(4, activation=sigmoid))
         net.compile(losses.mse)
 
         net.layers[1].w = kernel_1.reshape(net.layers[1].w.shape)
@@ -153,7 +152,46 @@ class TestConv(unittest.TestCase):
         print(a)
 
         # Expected output
-        y = np.array([[0, 1, 0, 1]])
+        y = np.array([[0, 0, 1, 1]])
+
+        # Train model
+        net.fit(x.reshape(batch_size, *input_shape), y, epochs=10, batch_size=1, learning_rate=0.3)
+
+        # Predict trained model output
+        a = net.predict(x.reshape(batch_size, *input_shape))
+        print(a)
+        np.testing.assert_allclose(a, y, rtol=1e-5)
+
+    def test_prediction_4(self):
+        # Define input shape
+        batch_size = 1
+        input_shape = (4, 4, 1)  # (rows, cols, channels)
+
+        # Define sample input
+        x = np.array([
+            [.7, -.3, -.7, .5],
+            [.9, -.5, -.2, .9],
+            [-.1, .8, -.3, -.5],
+            [0, .2, -.1, .6]
+        ])
+
+
+        # Build model
+        net = Network()
+        net.add_layer(InputLayer(input_shape=(batch_size, *input_shape)))
+        net.add_layer(Convolutional(4, (2, 2), activation=relu, padding='same'))
+        net.add_layer(Convolutional(2, (2, 2), activation=relu, padding='same'))
+        net.add_layer(MaxPooling((2, 2), 2))
+        net.add_layer(Flatten())
+        net.compile(losses.mse)
+
+
+        # Predict not trained model output
+        a = net.predict(x.reshape(batch_size, *input_shape))
+        print(a)
+
+        # Expected output
+        y = np.array([[0, 1, 1, 1, 1, 0, 0, 0]])
 
         # Train model
         net.fit(x.reshape(batch_size, *input_shape), y, epochs=20, batch_size=1, learning_rate=0.3)

@@ -108,19 +108,24 @@ class Convolutional(Layer):
 
     def backpropagate(self, grad: np.ndarray, a_: Layer, w_out: Layer = None) -> tuple:
 
-        batch_size, out_rows, out_cols, out_channels = a_.shape
+        batch_size, _, _, _ = self.shape
+        if w_out is not None:
+            out_channels = w_out.shape[0]
+        in_channels = self.w.shape[1]
 
         grad_b = np.zeros(self.shape)
         grad_w = np.zeros_like(self.w)
 
         for b in range(batch_size):
             for k in range(self.knum):
-                for c in range(out_channels):
-                    grad_pad = pad_like(grad[b, :, :, c], grad_b[b, :, :, c])
-                    # grad_b[b, :, :, c] += convolve(grad_pad, self.w[k, c, :, :], 'same')
-                    grad_b[b, :, :, c] += grad_pad if w_out is None else convolve(grad_pad, w_out[b, c, :, :], 'same')
-                    grad_b[b, :, :, c] *= activations.d(self.activation, self.z[b, :, :, k])
-                    grad_w[b, k, :, :] += crosscorrelate(a_[b, :, :, c], grad[b, :, :, c], 'valid')
+                if w_out is None:
+                    grad_b[b, :, :, k] = grad[b, :, :, k]
+                else:
+                    for c_ in range(out_channels):
+                        grad_b[b, :, :, k] += convolve(grad[b, :, :, c_], w_out[c_, k, :, :], 'same')
+
+                for c in range(in_channels):
+                    grad_w[k, c, :, :] += crosscorrelate(a_[b, :, :, c], grad[b, :, :, k], 'valid')
 
         return grad_b, grad_w
 
